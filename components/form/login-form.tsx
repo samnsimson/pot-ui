@@ -2,8 +2,8 @@
 import { FC, HTMLAttributes } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LoginSchema } from "@/lib/schema/auth-schema";
 import { z } from "zod";
+import { schemas } from "@/lib/api-client";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
@@ -15,15 +15,15 @@ interface LoginFormProps extends HTMLAttributes<HTMLDivElement> {
     [x: string]: any;
 }
 
-type FormSchema = z.infer<typeof LoginSchema>;
+type LoginSchema = z.infer<typeof schemas.Body_login>;
 
 export const LoginForm: FC<LoginFormProps> = ({}) => {
-    const form = useForm<FormSchema>({
-        resolver: zodResolver(LoginSchema),
+    const form = useForm<LoginSchema>({
+        resolver: zodResolver(schemas.Body_login),
         defaultValues: { username: "", password: "" },
     });
 
-    const handleLogin = async (loginData: FormSchema) => {
+    const handleLogin = async (loginData: LoginSchema) => {
         const { access_token } = await login(loginData);
         localStorage.setItem("access_token", access_token);
         redirect("/");

@@ -7,7 +7,7 @@
         "build": "next build",
         "start": "next start",
         "lint": "next lint",
-        "prebuild": "openapi-zod-client http://localhost:8000/api/v1/openapi.json --group-strategy=tag-file -o lib/api-client --export-schemas=true --export-types=true --base-url=http://localhost:8000/api/v1"
+        "prebuild": "openapi-zod-client http://localhost:8000/api/v1/openapi.json -o lib/api-client.ts --base-url=http://localhost:8000/api/v1 --strict-objects --export-schemas --export-types"
     },
     "dependencies": {
         "@hookform/resolvers": "^3.10.0",
