@@ -1,6 +1,6 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import { DashboardHeader } from "@/components/dashboard-header";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { FC, PropsWithChildren } from "react";
 
 const DashboardLayout: FC<PropsWithChildren> = ({ children }) => {
