@@ -44,11 +44,7 @@ const Body_login = z
     .passthrough();
 const LoginResponseSchema = z.object({ access_token: z.string(), token_type: z.string() }).strict().passthrough();
 const ValidationError: z.ZodType<ValidationError> = z
-    .object({
-        loc: z.array(z.union([z.string(), z.number()])),
-        msg: z.string(),
-        type: z.string(),
-    })
+    .object({ loc: z.array(z.union([z.string(), z.number()])), msg: z.string(), type: z.string() })
     .strict()
     .passthrough();
 const HTTPValidationError: z.ZodType<HTTPValidationError> = z
@@ -61,13 +57,7 @@ const DomainCreateSchema: z.ZodType<DomainCreateSchema> = z
     .strict()
     .passthrough();
 const UserCreateSchema: z.ZodType<UserCreateSchema> = z
-    .object({
-        username: z.string(),
-        email: z.string().email(),
-        phone: z.string(),
-        password: z.string().min(6).max(16),
-        domain: DomainCreateSchema,
-    })
+    .object({ username: z.string(), email: z.string().email(), phone: z.string(), password: z.string().min(6).max(16), domain: DomainCreateSchema })
     .strict()
     .passthrough();
 const UserOutSchema = z
@@ -81,7 +71,6 @@ const UserOutSchema = z
     })
     .strict()
     .passthrough();
-const AppCreateSchema = z.object({ name: z.string() }).strict().passthrough();
 const AppOutSchema = z
     .object({
         id: z.string().uuid(),
@@ -93,12 +82,9 @@ const AppOutSchema = z
     })
     .strict()
     .passthrough();
+const AppCreateSchema = z.object({ name: z.string() }).strict().passthrough();
 const ContentCreateSchema = z
-    .object({
-        key: z.string(),
-        value: z.union([z.unknown(), z.null()]).optional(),
-        parent_id: z.union([z.string(), z.null()]).optional(),
-    })
+    .object({ key: z.string(), value: z.union([z.unknown(), z.null()]).optional(), parent_id: z.union([z.string(), z.null()]).optional() })
     .strict()
     .passthrough();
 const ContentOutSchema: z.ZodType<ContentOutSchema> = z.lazy(() =>
@@ -114,7 +100,7 @@ const ContentOutSchema: z.ZodType<ContentOutSchema> = z.lazy(() =>
             children: z.array(ContentOutSchema).optional().default([]),
         })
         .strict()
-        .passthrough(),
+        .passthrough()
 );
 const DomainOutSchema = z
     .object({
@@ -135,8 +121,8 @@ export const schemas = {
     DomainCreateSchema,
     UserCreateSchema,
     UserOutSchema,
-    AppCreateSchema,
     AppOutSchema,
+    AppCreateSchema,
     ContentCreateSchema,
     ContentOutSchema,
     DomainOutSchema,
@@ -148,7 +134,7 @@ const endpoints = makeApi([
         path: "/apps",
         alias: "get_apps",
         requestFormat: "json",
-        response: z.unknown(),
+        response: z.array(AppOutSchema),
     },
     {
         method: "post",

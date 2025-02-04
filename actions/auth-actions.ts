@@ -18,7 +18,7 @@ export const login = async ({ username, password }: LoginSchema) => {
     } catch (error) {
         console.log("🚀 ~ login ~ error:", error);
     } finally {
-        redirect("/dashboard");
+        redirect("/");
     }
 };
 

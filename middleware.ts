@@ -7,6 +7,8 @@ function checkAuthentication(request: NextRequest): boolean {
 }
 
 export function middleware(request: NextRequest) {
+    const { pathname } = request.nextUrl;
+    if (pathname === "/login" || pathname === "/signup") return NextResponse.next();
     const isAuthenticated = checkAuthentication(request);
     const loginRoute = new URL("/login", request.url);
     if (!isAuthenticated) return NextResponse.redirect(loginRoute);
@@ -14,5 +16,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ["/dashboard/:path*"],
+    matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };

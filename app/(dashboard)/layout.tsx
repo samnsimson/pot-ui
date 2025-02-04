@@ -10,7 +10,7 @@ const DashboardLayout: FC<PropsWithChildren> = ({ children }) => {
             <main className="w-full">
                 <div className="w-full h-screen">
                     <DashboardHeader />
-                    {children}
+                    <div className="p-6">{children}</div>
                 </div>
             </main>
         </SidebarProvider>
