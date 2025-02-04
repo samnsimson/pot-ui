@@ -9,7 +9,6 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { LogInIcon } from "lucide-react";
 import { login } from "@/actions/auth-actions";
-import { redirect } from "next/navigation";
 
 interface LoginFormProps extends HTMLAttributes<HTMLDivElement> {
     [x: string]: any;
@@ -23,15 +22,9 @@ export const LoginForm: FC<LoginFormProps> = ({}) => {
         defaultValues: { username: "", password: "" },
     });
 
-    const handleLogin = async (loginData: LoginSchema) => {
-        const { access_token } = await login(loginData);
-        localStorage.setItem("access_token", access_token);
-        redirect("/");
-    };
-
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleLogin)} className="space-y-8">
+            <form onSubmit={form.handleSubmit(login)} className="space-y-8">
                 <FormField
                     name="username"
                     control={form.control}
