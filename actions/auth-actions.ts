@@ -9,16 +9,16 @@ type LoginSchema = z.infer<typeof schemas.Body_login>;
 type SignupSchema = z.infer<typeof schemas.UserCreateSchema>;
 
 export const login = async ({ username, password }: LoginSchema) => {
+    let redirectUrl = "/";
     try {
-        const { access_token } = await api.login({ username, password });
         const cookieStore = await cookies();
-        const name = constants.ACCESS_TOKEN;
-        const value = access_token;
-        cookieStore.set({ name, value, httpOnly: true, path: "/", sameSite: true });
+        const response = await api.login({ username, password });
+        cookieStore.set({ name: constants.ACCESS_TOKEN, value: response.access_token });
+        redirectUrl = response.redirect_url;
     } catch (error) {
         console.log("🚀 ~ login ~ error:", error);
     } finally {
-        redirect("/");
+        redirect(redirectUrl);
     }
 };
 

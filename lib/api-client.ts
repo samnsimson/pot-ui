@@ -42,7 +42,7 @@ const Body_login = z
     })
     .strict()
     .passthrough();
-const LoginResponseSchema = z.object({ access_token: z.string(), token_type: z.string() }).strict().passthrough();
+const LoginResponseSchema = z.object({ status: z.string(), redirect_url: z.string(), access_token: z.string(), token_type: z.string() }).strict().passthrough();
 const ValidationError: z.ZodType<ValidationError> = z
     .object({ loc: z.array(z.union([z.string(), z.number()])), msg: z.string(), type: z.string() })
     .strict()
