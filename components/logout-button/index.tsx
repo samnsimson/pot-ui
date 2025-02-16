@@ -13,12 +13,12 @@ export const LogoutButton: FC<LogoutButtonProps> = ({ className, ...props }) => 
     return (
         <Button
             variant="destructive"
-            className={cn("rounded-none w-full min-h-12 max-w-28 flex gap-3 items-center justify-center", className)}
+            className={cn("rounded-none w-full min-h-12 max-w-32 flex gap-3 items-center justify-center", className)}
             onClick={logout}
             {...props}
         >
             <span>Log out</span>
-            <LogOutIcon />
+            <LogOutIcon size={24} />
         </Button>
     );
 };
