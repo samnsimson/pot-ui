@@ -21,12 +21,12 @@ const SIZE = {
 export const AppDrawer: FC<AppDrawerProps> = ({ open, title, description = "", component, onClose, size = "medium", side = "right", ...props }) => {
     return (
         <Sheet open={open} onOpenChange={onClose}>
-            <SheetContent className={`${SIZE[size]}`} side={side} {...props}>
-                <SheetHeader>
+            <SheetContent className={`${SIZE[size]} p-0`} side={side} {...props}>
+                <SheetHeader className="border-b border-border p-6">
                     <SheetTitle>{title}</SheetTitle>
-                    <SheetDescription>{description}</SheetDescription>
+                    {description && <SheetDescription>{description}</SheetDescription>}
                 </SheetHeader>
-                {component}
+                <div className="p-6">{component}</div>
             </SheetContent>
         </Sheet>
     );

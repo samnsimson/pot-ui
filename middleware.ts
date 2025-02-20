@@ -3,7 +3,6 @@ import { constants } from "./constants/constants";
 
 function checkAuthentication(request: NextRequest): boolean {
     const accessToken = request.cookies.get(constants.ACCESS_TOKEN);
-    console.log("🚀 ~ checkAuthentication ~ accessToken:", accessToken);
     return !!accessToken;
 }
 
