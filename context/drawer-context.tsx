@@ -1,6 +1,6 @@
 "use client";
 import { AppDrawer } from "@/components/app-drawer";
-import { createContext, FC, Fragment, PropsWithChildren, ReactElement, useContext, useState } from "react";
+import { createContext, FC, Fragment, PropsWithChildren, ReactElement, useContext, useRef, useState } from "react";
 
 interface RenderProps {
     isOpen: boolean;
@@ -13,8 +13,8 @@ interface DrawerProps {
 }
 
 interface DrawerContextType {
-    openDrawer: (props: DrawerProps) => void;
-    closeDrawer: () => void;
+    open: (props: DrawerProps) => void;
+    close: () => void;
 }
 
 const DrawerContext = createContext<DrawerContextType | undefined>(undefined);
@@ -24,26 +24,28 @@ export const DrawerProvider: FC<PropsWithChildren> = ({ children }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [{ title, description, render }, setDrawerProps] = useState<DrawerProps>(defaultDrawerProps);
 
-    const openDrawer = (props: DrawerProps) => {
+    const open = (props: DrawerProps) => {
         setDrawerProps(props);
         setIsOpen(true);
     };
 
-    const closeDrawer = () => {
+    const close = () => {
         setIsOpen(false);
         setTimeout(() => setDrawerProps(defaultDrawerProps), 300);
     };
 
     return (
-        <DrawerContext.Provider value={{ openDrawer, closeDrawer }}>
+        <DrawerContext.Provider value={{ open, close }}>
             {children}
-            <AppDrawer open={isOpen} title={title} description={description} component={render({ isOpen })} onClose={closeDrawer} />
+            <AppDrawer open={isOpen} title={title} description={description} component={render({ isOpen })} onClose={close} />
         </DrawerContext.Provider>
     );
 };
 
-export const useDrawer = () => {
+export const useDrawer = (props: DrawerProps) => {
     const context = useContext(DrawerContext);
     if (!context) throw new Error("useDrawer must be used within a DrawerProvider");
-    return context;
+
+    const openDrawer = () => context.open(props);
+    return { openDrawer };
 };
