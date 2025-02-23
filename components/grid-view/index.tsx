@@ -1,8 +1,9 @@
 "use client";
 import { cva, VariantProps } from "class-variance-authority";
-import { FC, ForwardRefExoticComponent, HTMLAttributes, ReactNode, RefAttributes } from "react";
+import { FC, ForwardRefExoticComponent, HTMLAttributes, ReactNode, RefAttributes, useState } from "react";
 import { Button } from "../ui/button";
 import { LucideProps } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const gridStyles = cva("grid", {
     variants: {
@@ -57,7 +58,7 @@ export const GridView = <T,>({
     className,
     ...props
 }: GridViewProps<T>) => {
-    const columnClasses = () => {
+    const [columnClasses] = useState(() => {
         if (!columns) return "";
         const { sm, md, lg, xl } = columns;
         const classes = [];
@@ -66,7 +67,7 @@ export const GridView = <T,>({
         if (lg) classes.push(`lg:grid-cols-${lg}`);
         if (xl) classes.push(`xl:grid-cols-${xl}`);
         return classes.join(" ");
-    };
+    });
 
     return (
         <div id="ui-grid-view" className="flex flex-col gap-3">
@@ -80,7 +81,7 @@ export const GridView = <T,>({
                 </div>
             )}
             {data.length > 0 ? (
-                <div className={`${columnClasses()} ${gridStyles({ gap, className })}`} {...props}>
+                <div className={cn(gridStyles({ gap, className }), columnClasses)} {...props}>
                     {renderPrefix && <div>{renderPrefix()}</div>}
                     {data.map((item, index) => (
                         <div key={index}>{renderItem(item, index)}</div>

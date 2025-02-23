@@ -42,7 +42,10 @@ const Body_login = z
     })
     .strict()
     .passthrough();
-const LoginResponseSchema = z.object({ status: z.string(), redirect_url: z.string(), access_token: z.string(), token_type: z.string() }).strict().passthrough();
+const LoginResponseSchema = z
+    .object({ status: z.string(), redirect_url: z.string(), access_token: z.string(), token_type: z.string(), token_max_age: z.number().int() })
+    .strict()
+    .passthrough();
 const ValidationError: z.ZodType<ValidationError> = z
     .object({ loc: z.array(z.union([z.string(), z.number()])), msg: z.string(), type: z.string() })
     .strict()
@@ -132,7 +135,7 @@ const endpoints = makeApi([
     {
         method: "get",
         path: "/apps",
-        alias: "get_apps",
+        alias: "list_apps",
         requestFormat: "json",
         response: z.array(AppOutSchema),
     },
@@ -146,6 +149,27 @@ const endpoints = makeApi([
                 name: "body",
                 type: "Body",
                 schema: z.object({ name: z.string() }).strict().passthrough(),
+            },
+        ],
+        response: AppOutSchema,
+        errors: [
+            {
+                status: 422,
+                description: `Validation Error`,
+                schema: HTTPValidationError,
+            },
+        ],
+    },
+    {
+        method: "get",
+        path: "/apps/:id",
+        alias: "get_app",
+        requestFormat: "json",
+        parameters: [
+            {
+                name: "id",
+                type: "Path",
+                schema: z.string().uuid(),
             },
         ],
         response: AppOutSchema,

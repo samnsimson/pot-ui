@@ -13,7 +13,10 @@ export const login = async ({ username, password }: LoginSchema) => {
     try {
         const cookieStore = await cookies();
         const response = await api.login({ username, password });
-        cookieStore.set({ name: constants.ACCESS_TOKEN, value: response.access_token, maxAge: 60 * 60, httpOnly: true, secure: true });
+        const name = constants.ACCESS_TOKEN;
+        const value = response.access_token;
+        const maxAge = response.token_max_age;
+        cookieStore.set({ name, value, maxAge, httpOnly: true, secure: true });
         redirectUrl = response.redirect_url;
     } catch (error) {
         console.log("🚀 ~ login ~ error:", error);
