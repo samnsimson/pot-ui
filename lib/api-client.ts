@@ -43,7 +43,16 @@ const Body_login = z
     .strict()
     .passthrough();
 const LoginResponseSchema = z
-    .object({ status: z.string(), redirect_url: z.string(), access_token: z.string(), token_type: z.string(), token_max_age: z.number().int() })
+    .object({
+        status: z.string(),
+        user_id: z.string(),
+        email: z.string(),
+        host: z.string(),
+        redirect_url: z.string(),
+        access_token: z.string(),
+        token_type: z.string(),
+        token_max_age: z.number().int(),
+    })
     .strict()
     .passthrough();
 const ValidationError: z.ZodType<ValidationError> = z

@@ -7,12 +7,12 @@ function checkAuthentication(request: NextRequest): boolean {
 }
 
 export function middleware(request: NextRequest) {
-    const { pathname } = request.nextUrl;
-    if (pathname === "/login" || pathname === "/signup") return NextResponse.next();
-    const isAuthenticated = checkAuthentication(request);
-    const loginRoute = new URL("/login", request.url);
-    if (!isAuthenticated) return NextResponse.redirect(loginRoute);
-    return NextResponse.next();
+    // const { pathname } = request.nextUrl;
+    // if (pathname === "/login" || pathname === "/signup") return NextResponse.next();
+    // const isAuthenticated = checkAuthentication(request);
+    // const loginRoute = new URL("/login", request.url);
+    // if (!isAuthenticated) return NextResponse.redirect(loginRoute);
+    // return NextResponse.next();
 }
 
 export const config = {

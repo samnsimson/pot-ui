@@ -8,9 +8,9 @@ const DashboardLayout: FC<PropsWithChildren> = ({ children }) => {
         <SidebarProvider>
             <AppSidebar />
             <main className="w-full">
-                <div className="w-full h-screen">
+                <div className="w-full h-screen flex flex-col">
                     <DashboardHeader />
-                    <div className="p-6">{children}</div>
+                    <div className="p-6 flex-1">{children}</div>
                 </div>
             </main>
         </SidebarProvider>

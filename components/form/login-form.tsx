@@ -8,7 +8,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { LogInIcon } from "lucide-react";
-import { login } from "@/actions/auth-actions";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 interface LoginFormProps extends HTMLAttributes<HTMLDivElement> {
     [x: string]: any;
@@ -17,10 +18,13 @@ interface LoginFormProps extends HTMLAttributes<HTMLDivElement> {
 type LoginSchema = z.infer<typeof schemas.Body_login>;
 
 export const LoginForm: FC<LoginFormProps> = ({}) => {
-    const form = useForm<LoginSchema>({
-        resolver: zodResolver(schemas.Body_login),
-        defaultValues: { username: "", password: "" },
-    });
+    const router = useRouter();
+    const form = useForm<LoginSchema>({ resolver: zodResolver(schemas.Body_login), defaultValues: { username: "", password: "" } });
+
+    const login = async ({ username, password }: LoginSchema) => {
+        const result = await signIn("credentials", { redirect: false, email: username, password });
+        if (result?.ok) router.push("/");
+    };
 
     return (
         <Form {...form}>

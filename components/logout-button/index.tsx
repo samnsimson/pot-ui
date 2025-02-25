@@ -1,9 +1,9 @@
 "use client";
 import { FC, HTMLAttributes } from "react";
 import { Button } from "../ui/button";
-import { logout } from "@/actions/auth-actions";
 import { cn } from "@/lib/utils";
 import { LogOutIcon } from "lucide-react";
+import { signOut } from "next-auth/react";
 
 interface LogoutButtonProps extends HTMLAttributes<HTMLButtonElement> {
     [x: string]: any;
@@ -14,7 +14,7 @@ export const LogoutButton: FC<LogoutButtonProps> = ({ className, ...props }) => 
         <Button
             variant="destructive"
             className={cn("rounded-none w-full min-h-12 max-w-32 flex gap-3 items-center justify-center", className)}
-            onClick={logout}
+            onClick={async () => await signOut({ redirect: true, callbackUrl: "/login" })}
             {...props}
         >
             <span>Log out</span>
