@@ -1,7 +1,7 @@
 {
     "inputSpec": "http://localhost:8000/api/v1/openapi.json",
     "generatorName": "typescript-axios",
-    "outputDir": "./lib/api-client",
+    "outputDir": "./lib/api",
     "additionalProperties": {
         "apiNameSuffix": "Api",
         "removeOperationIdPrefix": true

@@ -1,5 +1,5 @@
 "use server";
-import { api, schemas } from "@/lib/api-client";
+import { api, schemas } from "@/lib/api";
 import { z } from "zod";
 
 type SignupSchema = z.infer<typeof schemas.UserCreateSchema>;

@@ -1,5 +1,5 @@
 import CredentialsProvider from "next-auth/providers/credentials";
-import { api } from "./lib/api-client";
+import { api } from "./lib/api";
 import { AuthOptions } from "next-auth";
 
 export const authOptions: AuthOptions = {
@@ -11,8 +11,8 @@ export const authOptions: AuthOptions = {
                 try {
                     if (!credentials) return null;
                     const { email: username, password } = credentials;
-                    const { user_id, ...user } = await api.login({ username, password });
-                    return { id: user_id, ...user };
+                    const { user_id, access_token, ...user } = await api.login({ username, password });
+                    return { id: user_id, accessToken: access_token, ...user };
                 } catch (error) {
                     return null;
                 }
@@ -21,10 +21,16 @@ export const authOptions: AuthOptions = {
     ],
     callbacks: {
         async jwt({ token, user }: any) {
-            if (user) token.accessToken = user.token;
+            if (!user) return token;
+            token.id = user.id;
+            token.host = user.host;
+            token.accessToken = user.accessToken;
             return token;
         },
         async session({ session, token }: any) {
+            if (!token) return session;
+            session.id = token.id;
+            session.host = token.host;
             session.accessToken = token.accessToken;
             return session;
         },

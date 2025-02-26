@@ -1,28 +1,12 @@
 "use client";
-import axios, { AxiosResponse, InternalAxiosRequestConfig } from "axios";
+import axiosInstance from "./axios-instance";
+import { createApiClient, schemas } from "./api";
+import { z } from "zod";
 
-const requestCallback = (config: InternalAxiosRequestConfig<any>) => {
-    return config;
+export const http = createApiClient("/data", { axiosInstance });
+
+export const api = {
+    getApp: async (id: string) => await http.get_app({ params: { id } }),
+    getApps: async () => await http.list_apps(),
+    createApp: async (data: z.infer<typeof schemas.AppCreateSchema>) => await http.create_app(data),
 };
-
-const requestError = (error: any) => {
-    console.error("Request Error:", error);
-    return Promise.reject(error);
-};
-
-const responseCallback = (response: AxiosResponse<any, any>) => {
-    return response.data;
-};
-
-const responseError = (error: any) => {
-    console.log("🚀 ~ responseError ~ error:", error);
-    return Promise.reject(error);
-};
-
-const timeout = 10000;
-const headers = { "Content-Type": "application/json" };
-const axiosInstance = axios.create({ headers, timeout });
-axiosInstance.interceptors.request.use(requestCallback, requestError);
-axiosInstance.interceptors.response.use(responseCallback, responseError);
-
-export default axiosInstance;

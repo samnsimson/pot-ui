@@ -3,15 +3,17 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { FolderIcon, LayoutGridIcon, PlusCircleIcon } from "lucide-react";
 import Link from "next/link";
 import { FC, HTMLAttributes } from "react";
-import { schemas } from "@/lib/api-client";
+import { schemas } from "@/lib/api";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { CreateAppComponent } from "@/components/create-app";
 import { useDrawer } from "@/context/drawer-context";
 import { GridView } from "@/components/grid-view";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/http-client";
 
 interface ListAppsProps extends HTMLAttributes<HTMLDivElement> {
-    apps: Array<z.infer<typeof schemas.AppOutSchema>>;
+    [x: string]: any;
 }
 
 interface AppComponentProps extends HTMLAttributes<HTMLDivElement> {
@@ -42,17 +44,19 @@ const SuffixComponent: FC<{ trigger: () => void }> = ({ trigger }) => {
     );
 };
 
-export const ListApps: FC<ListAppsProps> = ({ apps, ...props }) => {
+export const ListApps: FC<ListAppsProps> = ({ ...props }) => {
     const { openDrawer } = useDrawer({
         title: "Create New App",
         description: "Create a new app",
         render: ({ isOpen }) => <CreateAppComponent isOpen={isOpen} />,
     });
+
+    const { data: apps } = useQuery({ queryKey: ["getApps"], queryFn: api.getApps });
     return (
         <div {...props}>
             <GridView
                 gap="md"
-                data={apps}
+                data={apps || []}
                 title="Apps"
                 icon={LayoutGridIcon}
                 columns={{ sm: 2, md: 6 }}

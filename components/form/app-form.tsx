@@ -3,11 +3,12 @@ import { FC, HTMLAttributes } from "react";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { schemas } from "@/lib/api-client";
+import { schemas } from "@/lib/api";
 import { z } from "zod";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { createApp } from "@/actions/apps-actions";
+import { useMutation } from "@tanstack/react-query";
+import { api } from "@/lib/http-client";
 
 type AppFormType = z.infer<typeof schemas.AppCreateSchema>;
 interface AppFormProps extends HTMLAttributes<HTMLDivElement> {
@@ -16,9 +17,13 @@ interface AppFormProps extends HTMLAttributes<HTMLDivElement> {
 
 export const AppForm: FC<AppFormProps> = ({ ...props }) => {
     const form = useForm<AppFormType>({ resolver: zodResolver(schemas.AppCreateSchema), defaultValues: { name: "" } });
+    const { mutate } = useMutation({ mutationFn: api.createApp });
+
+    const handleSubmit = (data: AppFormType) => mutate(data);
+
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(createApp)} className="flex flex-col gap-6">
+            <form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col gap-6">
                 <FormField
                     name="name"
                     control={form.control}
