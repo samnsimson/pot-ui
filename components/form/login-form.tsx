@@ -36,7 +36,7 @@ export const LoginForm: FC<LoginFormProps> = ({}) => {
                         <FormItem>
                             <FormLabel>Email</FormLabel>
                             <FormControl>
-                                <Input type="email" placeholder="user@example.com" {...field} />
+                                <Input type="email" placeholder="user@example.com" autoComplete="username" {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -49,7 +49,7 @@ export const LoginForm: FC<LoginFormProps> = ({}) => {
                         <FormItem>
                             <FormLabel>Password</FormLabel>
                             <FormControl>
-                                <Input type="password" {...field} />
+                                <Input type="password" autoComplete="current-password" {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>

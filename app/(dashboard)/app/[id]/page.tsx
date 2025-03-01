@@ -1,9 +1,12 @@
-import { getApp } from "@/actions/apps-actions";
 import { PageLoader } from "@/components/loader/page-loader";
+import { AppsViewContextProvider } from "@/context/apps-view-context";
 
 const AppPage = async ({ params }: any) => {
     const { id } = await params;
-    const app = await getApp(id);
-    return <PageLoader />;
+    return (
+        <AppsViewContextProvider appId={id}>
+            <PageLoader />
+        </AppsViewContextProvider>
+    );
 };
 export default AppPage;

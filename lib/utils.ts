@@ -6,8 +6,17 @@ export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
-export const getHeaders = async () => {
+export const getToken = async () => {
     const session = await getSession();
     const token = session ? `Bearer ${session.accessToken}` : undefined;
-    return { "Content-Type": "application/json", Authorization: token };
+    return token;
+};
+
+export const getTransactionId = () => {
+    return `${Date.now()}${Math.floor(100000 + Math.random() * 900000)}`;
+};
+
+export const token = {
+    get: () => window.localStorage.getItem("accessToken"),
+    set: (token: string) => window.localStorage.setItem("accessToken", token),
 };

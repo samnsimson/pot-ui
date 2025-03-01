@@ -1,10 +1,14 @@
 "use client";
 import axios, { AxiosResponse, InternalAxiosRequestConfig } from "axios";
-import { getSession, signOut } from "next-auth/react";
+import { signOut } from "next-auth/react";
+import { getToken, getTransactionId } from "./utils";
 
 const requestCallback = async (config: InternalAxiosRequestConfig<any>) => {
-    const session = await getSession();
-    if (session?.accessToken) config.headers.Authorization = `Bearer ${session.accessToken}`;
+    const token = await getToken();
+    const transactionId = getTransactionId();
+    config.headers.setContentType("application/json");
+    config.headers.set("x-transaction-id", transactionId);
+    if (token) config.headers.setAuthorization(token);
     return config;
 };
 
@@ -13,7 +17,7 @@ const requestError = (error: any) => {
 };
 
 const responseCallback = (response: AxiosResponse<any, any>) => {
-    return response.data;
+    return Promise.resolve(response);
 };
 
 const responseError = (error: any) => {

@@ -11,6 +11,7 @@ import { useDrawer } from "@/context/drawer-context";
 import { GridView } from "@/components/grid-view";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/http-client";
+import { queryKeys } from "@/constants/query-keys";
 
 interface ListAppsProps extends HTMLAttributes<HTMLDivElement> {
     [x: string]: any;
@@ -45,19 +46,18 @@ const SuffixComponent: FC<{ trigger: () => void }> = ({ trigger }) => {
 };
 
 export const ListApps: FC<ListAppsProps> = ({ ...props }) => {
-    const { openDrawer } = useDrawer({
-        title: "Create New App",
-        description: "Create a new app",
-        render: ({ isOpen }) => <CreateAppComponent isOpen={isOpen} />,
-    });
+    const title = "Create New App";
+    const description = "Create a new app";
+    const { openDrawer } = useDrawer({ title, description, render: ({ isOpen }) => <CreateAppComponent isOpen={isOpen} /> });
+    const { data: apps, isLoading } = useQuery({ queryKey: [queryKeys.GET_APPS], queryFn: api.getApps });
 
-    const { data: apps } = useQuery({ queryKey: ["getApps"], queryFn: api.getApps });
     return (
         <div {...props}>
             <GridView
                 gap="md"
                 data={apps || []}
                 title="Apps"
+                isLoading={isLoading}
                 icon={LayoutGridIcon}
                 columns={{ sm: 2, md: 6 }}
                 renderItem={(app) => <AppComponent app={app} />}

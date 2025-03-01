@@ -7,17 +7,21 @@ import { schemas } from "@/lib/api";
 import { z } from "zod";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/http-client";
+import { queryKeys } from "@/constants/query-keys";
 
 type AppFormType = z.infer<typeof schemas.AppCreateSchema>;
+type AppsType = z.infer<typeof schemas.AppOutSchema>;
 interface AppFormProps extends HTMLAttributes<HTMLDivElement> {
     [x: string]: any;
 }
 
 export const AppForm: FC<AppFormProps> = ({ ...props }) => {
+    const queryClient = useQueryClient();
     const form = useForm<AppFormType>({ resolver: zodResolver(schemas.AppCreateSchema), defaultValues: { name: "" } });
-    const { mutate } = useMutation({ mutationFn: api.createApp });
+    const onSuccess = (data: AppsType) => queryClient.setQueryData([queryKeys.GET_APPS], (apps: Array<AppsType>) => [...apps, data]);
+    const { mutate, isPending } = useMutation({ mutationFn: api.createApp, onSuccess: onSuccess });
 
     const handleSubmit = (data: AppFormType) => mutate(data);
 
@@ -37,7 +41,7 @@ export const AppForm: FC<AppFormProps> = ({ ...props }) => {
                         </FormItem>
                     )}
                 />
-                <Button size="lg" type="submit">
+                <Button size="lg" type="submit" isLoading={isPending}>
                     Create App
                 </Button>
             </form>

@@ -1,7 +1,7 @@
 "use client";
 import { SessionProvider } from "next-auth/react";
 import { DrawerProvider } from "@/context/drawer-context";
-import { QueryProvider } from "@/providers/query-client-provider";
+import { QueryProvider } from "@/context/query-client-provider";
 import { FC, PropsWithChildren } from "react";
 
 const Providers: FC<PropsWithChildren> = ({ children }) => {

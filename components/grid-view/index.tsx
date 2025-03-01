@@ -42,6 +42,7 @@ interface GridViewProps<T> extends HTMLAttributes<HTMLDivElement>, VariantProps<
     renderSuffix?: () => ReactNode;
     fallback?: Fallback;
     columns?: Columns;
+    isLoading?: boolean;
 }
 
 export const GridView = <T,>({
@@ -56,6 +57,7 @@ export const GridView = <T,>({
     columns,
     gap,
     className,
+    isLoading,
     ...props
 }: GridViewProps<T>) => {
     const [columnClasses] = useState(() => {
