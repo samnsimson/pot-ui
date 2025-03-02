@@ -12,9 +12,10 @@ import { GridView } from "@/components/grid-view";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/http-client";
 import { queryKeys } from "@/constants/query-keys";
+import { App } from "@/lib/types";
 
 interface ListAppsProps extends HTMLAttributes<HTMLDivElement> {
-    [x: string]: any;
+    apps: Array<App>;
 }
 
 interface AppComponentProps extends HTMLAttributes<HTMLDivElement> {
@@ -27,7 +28,7 @@ const AppComponent: FC<AppComponentProps> = ({ app }) => {
             <AspectRatio ratio={1 / 1}>
                 <Link href={`app/${app.id}`} className="flex flex-col items-center justify-center h-full w-full gap-3">
                     <FolderIcon size={48} className="text-border group-hover:text-sky-300" />
-                    <p className="group-hover:font-semibold">{app.name}</p>
+                    <p className="group-hover:text-sky-500 text-center overflow-hidden line-clamp-1 text-ellipsis">{app.name}</p>
                 </Link>
             </AspectRatio>
         </div>
@@ -45,17 +46,17 @@ const SuffixComponent: FC<{ trigger: () => void }> = ({ trigger }) => {
     );
 };
 
-export const ListApps: FC<ListAppsProps> = ({ ...props }) => {
+export const ListApps: FC<ListAppsProps> = ({ apps, ...props }) => {
     const title = "Create New App";
     const description = "Create a new app";
     const { openDrawer } = useDrawer({ title, description, render: ({ isOpen }) => <CreateAppComponent isOpen={isOpen} /> });
-    const { data: apps, isLoading } = useQuery({ queryKey: [queryKeys.GET_APPS], queryFn: api.getApps });
+    const { data, isLoading } = useQuery({ queryKey: [queryKeys.GET_APPS], queryFn: api.getApps, initialData: apps });
 
     return (
         <div {...props}>
             <GridView
                 gap="md"
-                data={apps || []}
+                data={data}
                 title="Apps"
                 isLoading={isLoading}
                 icon={LayoutGridIcon}

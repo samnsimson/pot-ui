@@ -8,6 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export const getToken = async () => {
     const session = await getSession();
+    console.log("🚀 ~ getToken ~ session:", session);
     const token = session ? `Bearer ${session.accessToken}` : undefined;
     return token;
 };

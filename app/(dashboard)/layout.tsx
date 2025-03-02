@@ -1,6 +1,7 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import { DashboardHeader } from "@/components/dashboard-header";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { Toaster } from "@/components/ui/toaster";
 import { FC, PropsWithChildren } from "react";
 
 const DashboardLayout: FC<PropsWithChildren> = ({ children }) => {
@@ -13,6 +14,7 @@ const DashboardLayout: FC<PropsWithChildren> = ({ children }) => {
                     <div className="p-6 flex-1">{children}</div>
                 </div>
             </main>
+            <Toaster />
         </SidebarProvider>
     );
 };

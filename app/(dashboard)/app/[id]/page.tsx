@@ -1,11 +1,11 @@
-import { PageLoader } from "@/components/loader/page-loader";
+import { AppDetail } from "@/components/apps/app-detail";
 import { AppsViewContextProvider } from "@/context/apps-view-context";
 
 const AppPage = async ({ params }: any) => {
     const { id } = await params;
     return (
         <AppsViewContextProvider appId={id}>
-            <PageLoader />
+            <AppDetail />
         </AppsViewContextProvider>
     );
 };

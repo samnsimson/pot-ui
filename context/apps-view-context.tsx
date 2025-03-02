@@ -3,7 +3,7 @@ import { queryKeys } from "@/constants/query-keys";
 import { schemas } from "@/lib/api";
 import { api } from "@/lib/http-client";
 import { useQuery } from "@tanstack/react-query";
-import { createContext, FC, PropsWithChildren, useContext } from "react";
+import { createContext, FC, PropsWithChildren, useContext, useMemo } from "react";
 import { z } from "zod";
 
 interface AppsViewContextInterface {
@@ -22,7 +22,8 @@ const AppsViewContext = createContext<AppsViewContextInterface>({
 
 export const AppsViewContextProvider: FC<ProviderProps> = ({ children, appId }) => {
     const { data } = useQuery({ queryKey: [queryKeys.GET_APPS_DETAIL, appId], queryFn: () => api.getApp(appId) });
-    return <AppsViewContext.Provider value={{ appId, appData: data }}>{children}</AppsViewContext.Provider>;
+    const contextValue = useMemo(() => ({ appId, appData: data }), [appId, data]);
+    return <AppsViewContext.Provider value={contextValue}>{children}</AppsViewContext.Provider>;
 };
 
-export const useAppsView = () => useContext(AppsViewContext);
+export const useAppContext = () => useContext(AppsViewContext);

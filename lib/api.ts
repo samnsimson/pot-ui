@@ -1,6 +1,20 @@
 import { makeApi, Zodios, type ZodiosOptions } from "@zodios/core";
 import { z } from "zod";
 
+type AppOutSchema = {
+    id: string;
+    name: string;
+    secret: string;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+    users: Array<UserResponseSchema>;
+};
+type UserResponseSchema = {
+    id: string;
+    username: string;
+    email: string;
+};
 type ContentOutSchema = {
     id: string;
     key: string;
@@ -83,7 +97,8 @@ const UserOutSchema = z
     })
     .strict()
     .passthrough();
-const AppOutSchema = z
+const UserResponseSchema: z.ZodType<UserResponseSchema> = z.object({ id: z.string().uuid(), username: z.string(), email: z.string() }).strict().passthrough();
+const AppOutSchema: z.ZodType<AppOutSchema> = z
     .object({
         id: z.string().uuid(),
         name: z.string(),
@@ -91,6 +106,7 @@ const AppOutSchema = z
         is_active: z.boolean(),
         created_at: z.string().datetime({ offset: true }),
         updated_at: z.string().datetime({ offset: true }),
+        users: z.array(UserResponseSchema),
     })
     .strict()
     .passthrough();
@@ -133,6 +149,7 @@ export const schemas = {
     DomainCreateSchema,
     UserCreateSchema,
     UserOutSchema,
+    UserResponseSchema,
     AppOutSchema,
     AppCreateSchema,
     ContentCreateSchema,

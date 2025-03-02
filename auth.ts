@@ -24,13 +24,15 @@ export const authOptions: AuthOptions = {
             if (!user) return token;
             token.id = user.id;
             token.host = user.host;
+            token.name = user.username;
             token.accessToken = user.accessToken;
             return token;
         },
         async session({ session, token }: any) {
             if (!token) return session;
-            session.id = token.id;
-            session.host = token.host;
+            session.user.id = token.sub;
+            session.user.host = token.host;
+            session.user.name = token.name;
             session.accessToken = token.accessToken;
             return session;
         },

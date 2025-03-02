@@ -10,20 +10,27 @@ import { Button } from "../ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/http-client";
 import { queryKeys } from "@/constants/query-keys";
+import { useFeedback } from "@/hooks/use-feedback";
 
-type AppFormType = z.infer<typeof schemas.AppCreateSchema>;
-type AppsType = z.infer<typeof schemas.AppOutSchema>;
+type AppCreate = z.infer<typeof schemas.AppCreateSchema>;
+type App = z.infer<typeof schemas.AppOutSchema>;
 interface AppFormProps extends HTMLAttributes<HTMLDivElement> {
     [x: string]: any;
 }
 
 export const AppForm: FC<AppFormProps> = ({ ...props }) => {
     const queryClient = useQueryClient();
-    const form = useForm<AppFormType>({ resolver: zodResolver(schemas.AppCreateSchema), defaultValues: { name: "" } });
-    const onSuccess = (data: AppsType) => queryClient.setQueryData([queryKeys.GET_APPS], (apps: Array<AppsType>) => [...apps, data]);
-    const { mutate, isPending } = useMutation({ mutationFn: api.createApp, onSuccess: onSuccess });
+    const { feedbackSuccess } = useFeedback();
+    const form = useForm<AppCreate>({ resolver: zodResolver(schemas.AppCreateSchema), defaultValues: { name: "" } });
 
-    const handleSubmit = (data: AppFormType) => mutate(data);
+    const onSuccess = (data: App) => {
+        queryClient.setQueryData([queryKeys.GET_APPS], (apps: Array<App>) => [...apps, data]);
+        feedbackSuccess({ title: "Success", description: "App created successfully!" });
+        form.reset({ name: "" });
+    };
+
+    const { mutate, isPending } = useMutation({ mutationFn: api.createApp, onSuccess: onSuccess });
+    const handleSubmit = (data: AppCreate) => mutate(data);
 
     return (
         <Form {...form}>
