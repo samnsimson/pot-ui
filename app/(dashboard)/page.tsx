@@ -1,9 +1,7 @@
-import { getApps } from "@/actions/apps-actions";
 import { ListApps } from "@/components/apps/list-apps";
-import { FC, PropsWithChildren } from "react";
+import { NextPage } from "next";
 
-const DashboardPage: FC<PropsWithChildren> = async ({}) => {
-    const apps = await getApps();
-    return <ListApps apps={apps} />;
+const DashboardPage: NextPage = async ({}) => {
+    return <ListApps />;
 };
 export default DashboardPage;

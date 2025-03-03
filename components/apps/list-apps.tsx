@@ -13,9 +13,10 @@ import { useQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/constants/query-keys";
 import { App } from "@/lib/types";
 import { client } from "@/actions/client-actions";
+import { PageLoader } from "../loader/page-loader";
 
 interface ListAppsProps extends HTMLAttributes<HTMLDivElement> {
-    apps: Array<App>;
+    [x: string]: any;
 }
 
 interface AppComponentProps extends HTMLAttributes<HTMLDivElement> {
@@ -46,11 +47,13 @@ const SuffixComponent: FC<{ trigger: () => void }> = ({ trigger }) => {
     );
 };
 
-export const ListApps: FC<ListAppsProps> = ({ apps, ...props }) => {
+export const ListApps: FC<ListAppsProps> = ({ ...props }) => {
     const title = "Create New App";
     const description = "Create a new app";
     const { openDrawer } = useDrawer({ title, description, render: ({ isOpen }) => <CreateAppComponent isOpen={isOpen} /> });
-    const { data, isLoading } = useQuery({ queryKey: [queryKeys.GET_APPS], queryFn: client.getApps, initialData: apps });
+    const { data, isLoading } = useQuery({ queryKey: [queryKeys.GET_APPS], queryFn: client.getApps });
+
+    if (!data) return <PageLoader />;
 
     return (
         <div {...props}>
