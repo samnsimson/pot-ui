@@ -1,7 +1,7 @@
 "use client";
+import { client } from "@/actions/client-actions";
 import { queryKeys } from "@/constants/query-keys";
 import { schemas } from "@/lib/api";
-import { api } from "@/lib/http-client";
 import { useQuery } from "@tanstack/react-query";
 import { createContext, FC, PropsWithChildren, useContext, useMemo } from "react";
 import { z } from "zod";
@@ -21,7 +21,7 @@ const AppsViewContext = createContext<AppsViewContextInterface>({
 });
 
 export const AppsViewContextProvider: FC<ProviderProps> = ({ children, appId }) => {
-    const { data } = useQuery({ queryKey: [queryKeys.GET_APPS_DETAIL, appId], queryFn: () => api.getApp(appId) });
+    const { data } = useQuery({ queryKey: [queryKeys.GET_APPS_DETAIL, appId], queryFn: () => client.getApp(appId) });
     const contextValue = useMemo(() => ({ appId, appData: data }), [appId, data]);
     return <AppsViewContext.Provider value={contextValue}>{children}</AppsViewContext.Provider>;
 };

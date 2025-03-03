@@ -8,12 +8,15 @@ type AppOutSchema = {
     is_active: boolean;
     created_at: string;
     updated_at: string;
-    users: Array<UserResponseSchema>;
+    users: Array<UserOutSchema>;
 };
-type UserResponseSchema = {
+type UserOutSchema = {
     id: string;
     username: string;
     email: string;
+    phone: string;
+    created_at: string;
+    updated_at: string;
 };
 type ContentOutSchema = {
     id: string;
@@ -86,7 +89,7 @@ const UserCreateSchema: z.ZodType<UserCreateSchema> = z
     .object({ username: z.string(), email: z.string().email(), phone: z.string(), password: z.string().min(6).max(16), domain: DomainCreateSchema })
     .strict()
     .passthrough();
-const UserOutSchema = z
+const UserOutSchema: z.ZodType<UserOutSchema> = z
     .object({
         id: z.string().uuid(),
         username: z.string(),
@@ -97,7 +100,6 @@ const UserOutSchema = z
     })
     .strict()
     .passthrough();
-const UserResponseSchema: z.ZodType<UserResponseSchema> = z.object({ id: z.string().uuid(), username: z.string(), email: z.string() }).strict().passthrough();
 const AppOutSchema: z.ZodType<AppOutSchema> = z
     .object({
         id: z.string().uuid(),
@@ -106,7 +108,7 @@ const AppOutSchema: z.ZodType<AppOutSchema> = z
         is_active: z.boolean(),
         created_at: z.string().datetime({ offset: true }),
         updated_at: z.string().datetime({ offset: true }),
-        users: z.array(UserResponseSchema),
+        users: z.array(UserOutSchema),
     })
     .strict()
     .passthrough();
@@ -149,7 +151,6 @@ export const schemas = {
     DomainCreateSchema,
     UserCreateSchema,
     UserOutSchema,
-    UserResponseSchema,
     AppOutSchema,
     AppCreateSchema,
     ContentCreateSchema,
@@ -199,6 +200,27 @@ const endpoints = makeApi([
             },
         ],
         response: AppOutSchema,
+        errors: [
+            {
+                status: 422,
+                description: `Validation Error`,
+                schema: HTTPValidationError,
+            },
+        ],
+    },
+    {
+        method: "get",
+        path: "/apps/:id/users",
+        alias: "get_app_users",
+        requestFormat: "json",
+        parameters: [
+            {
+                name: "id",
+                type: "Path",
+                schema: z.string().uuid(),
+            },
+        ],
+        response: z.array(UserOutSchema),
         errors: [
             {
                 status: 422,

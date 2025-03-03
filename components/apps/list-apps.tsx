@@ -10,9 +10,9 @@ import { CreateAppComponent } from "@/components/create-app";
 import { useDrawer } from "@/context/drawer-context";
 import { GridView } from "@/components/grid-view";
 import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/http-client";
 import { queryKeys } from "@/constants/query-keys";
 import { App } from "@/lib/types";
+import { client } from "@/actions/client-actions";
 
 interface ListAppsProps extends HTMLAttributes<HTMLDivElement> {
     apps: Array<App>;
@@ -50,7 +50,7 @@ export const ListApps: FC<ListAppsProps> = ({ apps, ...props }) => {
     const title = "Create New App";
     const description = "Create a new app";
     const { openDrawer } = useDrawer({ title, description, render: ({ isOpen }) => <CreateAppComponent isOpen={isOpen} /> });
-    const { data, isLoading } = useQuery({ queryKey: [queryKeys.GET_APPS], queryFn: api.getApps, initialData: apps });
+    const { data, isLoading } = useQuery({ queryKey: [queryKeys.GET_APPS], queryFn: client.getApps, initialData: apps });
 
     return (
         <div {...props}>

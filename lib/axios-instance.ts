@@ -31,4 +31,4 @@ const axiosInstance = axios.create({ headers, timeout: 1000 });
 axiosInstance.interceptors.request.use(requestCallback, requestError);
 axiosInstance.interceptors.response.use(responseCallback, responseError);
 
-export default axiosInstance;
+export { axiosInstance };

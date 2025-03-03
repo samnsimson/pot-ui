@@ -60,7 +60,7 @@ export const GridView = <T,>({
     isLoading,
     ...props
 }: GridViewProps<T>) => {
-    const [columnClasses] = useState(() => {
+    const columnClasses = (columns?: Columns) => {
         if (!columns) return "";
         const { sm, md, lg, xl } = columns;
         const classes = [];
@@ -69,7 +69,7 @@ export const GridView = <T,>({
         if (lg) classes.push(`lg:grid-cols-${lg}`);
         if (xl) classes.push(`xl:grid-cols-${xl}`);
         return classes.join(" ");
-    });
+    };
 
     return (
         <div id="ui-grid-view" className="flex flex-col gap-3">
@@ -83,7 +83,7 @@ export const GridView = <T,>({
                 </div>
             )}
             {data.length > 0 ? (
-                <div className={cn(gridStyles({ gap, className }), columnClasses)} {...props}>
+                <div className={cn(gridStyles({ gap }), "grid-cols-6", className)} {...props}>
                     {renderPrefix && <div>{renderPrefix()}</div>}
                     {data.map((item, index) => (
                         <div key={index}>{renderItem(item, index)}</div>

@@ -8,9 +8,9 @@ import { z } from "zod";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { api } from "@/lib/http-client";
 import { queryKeys } from "@/constants/query-keys";
 import { useFeedback } from "@/hooks/use-feedback";
+import { client } from "@/actions/client-actions";
 
 type AppCreate = z.infer<typeof schemas.AppCreateSchema>;
 type App = z.infer<typeof schemas.AppOutSchema>;
@@ -29,7 +29,7 @@ export const AppForm: FC<AppFormProps> = ({ ...props }) => {
         form.reset({ name: "" });
     };
 
-    const { mutate, isPending } = useMutation({ mutationFn: api.createApp, onSuccess: onSuccess });
+    const { mutate, isPending } = useMutation({ mutationFn: client.createApp, onSuccess: onSuccess });
     const handleSubmit = (data: AppCreate) => mutate(data);
 
     return (
