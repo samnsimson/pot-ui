@@ -1,23 +1,6 @@
 import { makeApi, Zodios, type ZodiosOptions } from "@zodios/core";
 import { z } from "zod";
 
-type AppOutSchema = {
-    id: string;
-    name: string;
-    secret: string;
-    is_active: boolean;
-    created_at: string;
-    updated_at: string;
-    users: Array<UserOutSchema>;
-};
-type UserOutSchema = {
-    id: string;
-    username: string;
-    email: string;
-    phone: string;
-    created_at: string;
-    updated_at: string;
-};
 type ContentOutSchema = {
     id: string;
     key: string;
@@ -36,6 +19,18 @@ type ValidationError = {
     msg: string;
     type: string;
 };
+type LoginResponseSchema = {
+    status: string;
+    user_id: string;
+    email: string;
+    host: string;
+    role: RoleEnum;
+    redirect_url: string;
+    access_token: string;
+    token_type: string;
+    token_max_age: number;
+};
+type RoleEnum = "user" | "admin" | "super_admin";
 type UserCreateSchema = {
     username: string;
     email: string;
@@ -59,12 +54,14 @@ const Body_login = z
     })
     .strict()
     .passthrough();
-const LoginResponseSchema = z
+const RoleEnum = z.enum(["user", "admin", "super_admin"]);
+const LoginResponseSchema: z.ZodType<LoginResponseSchema> = z
     .object({
         status: z.string(),
         user_id: z.string(),
         email: z.string(),
         host: z.string(),
+        role: RoleEnum,
         redirect_url: z.string(),
         access_token: z.string(),
         token_type: z.string(),
@@ -89,7 +86,7 @@ const UserCreateSchema: z.ZodType<UserCreateSchema> = z
     .object({ username: z.string(), email: z.string().email(), phone: z.string(), password: z.string().min(6).max(16), domain: DomainCreateSchema })
     .strict()
     .passthrough();
-const UserOutSchema: z.ZodType<UserOutSchema> = z
+const UserOutSchema = z
     .object({
         id: z.string().uuid(),
         username: z.string(),
@@ -100,7 +97,7 @@ const UserOutSchema: z.ZodType<UserOutSchema> = z
     })
     .strict()
     .passthrough();
-const AppOutSchema: z.ZodType<AppOutSchema> = z
+const AppOutSchema = z
     .object({
         id: z.string().uuid(),
         name: z.string(),
@@ -108,11 +105,11 @@ const AppOutSchema: z.ZodType<AppOutSchema> = z
         is_active: z.boolean(),
         created_at: z.string().datetime({ offset: true }),
         updated_at: z.string().datetime({ offset: true }),
-        users: z.array(UserOutSchema),
     })
     .strict()
     .passthrough();
 const AppCreateSchema = z.object({ name: z.string() }).strict().passthrough();
+const AppDeleteOutSchema = z.object({ id: z.string().uuid(), status: z.string() }).strict().passthrough();
 const ContentCreateSchema = z
     .object({ key: z.string(), value: z.union([z.unknown(), z.null()]).optional(), parent_id: z.union([z.string(), z.null()]).optional() })
     .strict()
@@ -145,6 +142,7 @@ const DomainOutSchema = z
 
 export const schemas = {
     Body_login,
+    RoleEnum,
     LoginResponseSchema,
     ValidationError,
     HTTPValidationError,
@@ -153,6 +151,7 @@ export const schemas = {
     UserOutSchema,
     AppOutSchema,
     AppCreateSchema,
+    AppDeleteOutSchema,
     ContentCreateSchema,
     ContentOutSchema,
     DomainOutSchema,
@@ -200,6 +199,27 @@ const endpoints = makeApi([
             },
         ],
         response: AppOutSchema,
+        errors: [
+            {
+                status: 422,
+                description: `Validation Error`,
+                schema: HTTPValidationError,
+            },
+        ],
+    },
+    {
+        method: "delete",
+        path: "/apps/:id",
+        alias: "delete_app",
+        requestFormat: "json",
+        parameters: [
+            {
+                name: "id",
+                type: "Path",
+                schema: z.string().uuid(),
+            },
+        ],
+        response: AppDeleteOutSchema,
         errors: [
             {
                 status: 422,

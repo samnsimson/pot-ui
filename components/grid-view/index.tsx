@@ -4,6 +4,7 @@ import { FC, ForwardRefExoticComponent, HTMLAttributes, ReactNode, RefAttributes
 import { Button } from "../ui/button";
 import { LucideProps } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { SectionTitle } from "../section-title";
 
 const gridStyles = cva("grid", {
     variants: {
@@ -46,10 +47,10 @@ interface GridViewProps<T> extends HTMLAttributes<HTMLDivElement>, VariantProps<
 }
 
 export const GridView = <T,>({
-    title,
+    title = "",
     description,
     data,
-    icon: Icon,
+    icon,
     renderItem,
     renderPrefix,
     renderSuffix,
@@ -72,21 +73,15 @@ export const GridView = <T,>({
     };
 
     return (
-        <div id="ui-grid-view" className="flex flex-col gap-3">
-            {(title || description) && (
-                <div className="header py-3 w-full flex items-center gap-3">
-                    {Icon && <Icon size={32} className="text-slate-400" />}
-                    <div>
-                        {title && <h2>{title}</h2>}
-                        {description && <p>{description}</p>}
-                    </div>
-                </div>
-            )}
+        <div id="ui-grid-view" className="flex flex-col">
+            <SectionTitle title={title} description={description} icon={icon} />
             {data.length > 0 ? (
-                <div className={cn(gridStyles({ gap }), "grid-cols-6", className)} {...props}>
+                <div className={cn("divide-x", gridStyles({ gap }), "grid-cols-6", className)} {...props}>
                     {renderPrefix && <div>{renderPrefix()}</div>}
                     {data.map((item, index) => (
-                        <div key={index}>{renderItem(item, index)}</div>
+                        <div key={index} className="border-b border-border">
+                            {renderItem(item, index)}
+                        </div>
                     ))}
                     {renderSuffix && <div>{renderSuffix()}</div>}
                 </div>

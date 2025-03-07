@@ -1,5 +1,5 @@
 "use client";
-import { FC, HTMLAttributes } from "react";
+import { FC, HTMLAttributes, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -19,9 +19,11 @@ type LoginSchema = z.infer<typeof schemas.Body_login>;
 
 export const LoginForm: FC<LoginFormProps> = ({}) => {
     const router = useRouter();
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const form = useForm<LoginSchema>({ resolver: zodResolver(schemas.Body_login), defaultValues: { username: "", password: "" } });
 
     const login = async ({ username, password }: LoginSchema) => {
+        setIsLoading(true);
         const result = await signIn("credentials", { redirect: false, email: username, password });
         if (result?.ok) router.push("/");
     };
@@ -34,9 +36,9 @@ export const LoginForm: FC<LoginFormProps> = ({}) => {
                     control={form.control}
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Email</FormLabel>
+                            <FormLabel htmlFor="email">Email</FormLabel>
                             <FormControl>
-                                <Input type="email" placeholder="user@example.com" autoComplete="username" {...field} />
+                                <Input id="username" type="text" placeholder="user@example.com" autoComplete="username" {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -47,15 +49,15 @@ export const LoginForm: FC<LoginFormProps> = ({}) => {
                     control={form.control}
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Password</FormLabel>
+                            <FormLabel htmlFor="password">Password</FormLabel>
                             <FormControl>
-                                <Input type="password" autoComplete="current-password" {...field} />
+                                <Input id="password" aria-label="password" type="password" autoComplete="current-password" {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
-                <Button size="lg" className="w-full font-poppins font-bold">
+                <Button size="lg" className="w-full font-poppins font-bold" isLoading={isLoading}>
                     <LogInIcon />
                     <span>Login</span>
                 </Button>

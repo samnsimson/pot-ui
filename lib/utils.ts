@@ -1,4 +1,5 @@
 import { clsx, type ClassValue } from "clsx";
+import { Session } from "next-auth";
 import { getSession } from "next-auth/react";
 import { twMerge } from "tailwind-merge";
 
@@ -19,4 +20,11 @@ export const getTransactionId = () => {
 export const token = {
     get: () => window.localStorage.getItem("accessToken"),
     set: (token: string) => window.localStorage.setItem("accessToken", token),
+};
+
+export const roles = {
+    isSuperAdmin: (session: Session | null) => {
+        if (!session) return false;
+        return session.role === "super_admin";
+    },
 };

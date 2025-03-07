@@ -15,4 +15,5 @@ export const client = {
     getApps: async () => http.list_apps().catch(throwError),
     createApp: async (data: AppCreate) => http.create_app(data).catch(throwError),
     getAppUsers: async (id: string) => http.get_app_users({ params: { id } }).catch(throwError),
+    deleteApp: async (id: string) => http.delete_app(undefined, { params: { id } }),
 };

@@ -25,7 +25,7 @@ interface AppComponentProps extends HTMLAttributes<HTMLDivElement> {
 
 const AppComponent: FC<AppComponentProps> = ({ app }) => {
     return (
-        <div className="border border-border p-6 group">
+        <div className="p-6 group">
             <AspectRatio ratio={1 / 1}>
                 <Link href={`app/${app.id}`} className="flex flex-col items-center justify-center h-full w-full gap-3">
                     <FolderIcon size={48} className="text-border group-hover:text-sky-300" />
@@ -39,7 +39,7 @@ const AppComponent: FC<AppComponentProps> = ({ app }) => {
 const SuffixComponent: FC<{ trigger: () => void }> = ({ trigger }) => {
     return (
         <AspectRatio ratio={1 / 1}>
-            <Button variant="secondary" className="flex flex-col items-center justify-center h-full w-full gap-3" onClick={() => trigger()}>
+            <Button variant="secondary" className="flex flex-col items-center justify-center h-full w-full gap-3 rounded-none" onClick={() => trigger()}>
                 <PlusCircleIcon size={48} className="text-gray-400" />
                 <p>Create New App</p>
             </Button>
@@ -58,7 +58,7 @@ export const ListApps: FC<ListAppsProps> = ({ ...props }) => {
     return (
         <div {...props}>
             <GridView
-                gap="md"
+                gap="none"
                 data={data}
                 title="Apps"
                 isLoading={isLoading}
