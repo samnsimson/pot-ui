@@ -38,10 +38,10 @@ export const AppDetail: FC<AppDetailProps> = ({ ...props }) => {
     if (!appData) return <PageLoader />;
 
     return (
-        <div {...props}>
-            <div className="flex flex-col">
+        <div className="h-full" {...props}>
+            <div className="flex flex-col h-full">
                 <SectionTitle title={appData.name} icon={BoxIcon} description={`secret: ${appData.secret}`} />
-                <Tabs defaultValue="content" className="w-full">
+                <Tabs defaultValue="content" className="w-full h-full">
                     <TabsList>
                         <TabsTrigger value="content">
                             <DatabaseIcon size={16} />
@@ -56,8 +56,11 @@ export const AppDetail: FC<AppDetailProps> = ({ ...props }) => {
                             <span>Settings</span>
                         </TabsTrigger>
                     </TabsList>
-                    <TabsContent value="content">
-                        <FolderTree data={folderData} />
+                    <TabsContent value="content" className="h-full">
+                        <div className="grid grid-cols-12 h-full">
+                            <FolderTree data={folderData} className="col-span-2 border-r border-border" />
+                            <div className="col-span-10"></div>
+                        </div>
                     </TabsContent>
                     <TabsContent value="users">
                         <AppUsers appId={appData.id} />

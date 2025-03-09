@@ -1,10 +1,10 @@
-import { LucideProps } from "lucide-react";
-import { FC, ForwardRefExoticComponent, HTMLAttributes, RefAttributes } from "react";
+import { Icon } from "@/lib/types";
+import { FC, HTMLAttributes } from "react";
 
 interface SectionTitleProps extends HTMLAttributes<HTMLDivElement> {
     title: string;
     description?: string;
-    icon?: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>;
+    icon?: Icon;
 }
 
 export const SectionTitle: FC<SectionTitleProps> = ({ title, description, icon: Icon, ...props }) => {

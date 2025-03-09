@@ -1,5 +1,7 @@
-import { FolderIcon, FolderOpenIcon } from "lucide-react";
-import { useState } from "react";
+"use client";
+import { FileIcon, FolderIcon, FolderOpenIcon, PencilIcon, XIcon } from "lucide-react";
+import { FC, HTMLAttributes, useState } from "react";
+import { cn } from "@/lib/utils";
 
 interface TreeNode {
     name: string;
@@ -7,13 +9,30 @@ interface TreeNode {
     children?: TreeNode[];
 }
 
-interface FolderTreeProps {
+interface FolderTreeProps extends HTMLAttributes<HTMLDivElement> {
     data: TreeNode[];
 }
 
-const FolderTree: React.FC<FolderTreeProps> = ({ data }) => {
+const NodeName: FC<{ name: string }> = ({ name }) => {
+    const [isEditing, setIsEditing] = useState<boolean>(false);
+    const Icon = isEditing ? XIcon : PencilIcon;
     return (
-        <div className="p-2">
+        <div className="flex items-center gap-2">
+            {isEditing ? (
+                <form className="inline">
+                    <input type="text" name="name" defaultValue={name} className="border border-border px-2" />
+                </form>
+            ) : (
+                <div>{name}</div>
+            )}
+            <Icon size={13} onClick={() => setIsEditing(!isEditing)} />
+        </div>
+    );
+};
+
+const FolderTree: FC<FolderTreeProps> = ({ data, className }) => {
+    return (
+        <div className={cn("p-2", className)}>
             {data.map((node, index) => (
                 <TreeNodeComponent key={index} node={node} />
             ))}
@@ -26,10 +45,19 @@ const TreeNodeComponent: React.FC<{ node: TreeNode }> = ({ node }) => {
 
     return (
         <div className="">
-            <div className={`flex items-center cursor-pointer h-8 ${node.isFolder ? "font-bold" : ""}`} onClick={() => node.isFolder && setIsOpen(!isOpen)}>
-                {/* {node.isFolder && <span className="mr-1">{isOpen ? "📂" : "📁"}</span>} */}
-                {node.isFolder && <span className="mr-2">{isOpen ? <FolderOpenIcon size={16} /> : <FolderIcon size={16} />}</span>}
-                <span>{node.name}</span>
+            <div className="flex items-center gap-3">
+                <div className={`flex items-center cursor-pointer h-8 ${node.isFolder ? "font-bold" : ""}`}>
+                    {node.isFolder ? (
+                        <span className="mr-2" onClick={() => node.isFolder && setIsOpen(!isOpen)}>
+                            {isOpen ? <FolderOpenIcon size={16} /> : <FolderIcon size={16} />}
+                        </span>
+                    ) : (
+                        <span className="mr-2">
+                            <FileIcon size={16} />
+                        </span>
+                    )}
+                    <NodeName name={node.name} />
+                </div>
             </div>
 
             {isOpen && node.children && (

@@ -1,10 +1,10 @@
 "use client";
 import { cva, VariantProps } from "class-variance-authority";
-import { FC, ForwardRefExoticComponent, HTMLAttributes, ReactNode, RefAttributes, useState } from "react";
+import { HTMLAttributes, ReactNode } from "react";
 import { Button } from "../ui/button";
-import { LucideProps } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SectionTitle } from "../section-title";
+import { Icon } from "@/lib/types";
 
 const gridStyles = cva("grid", {
     variants: {
@@ -36,7 +36,7 @@ type Columns = {
 interface GridViewProps<T> extends HTMLAttributes<HTMLDivElement>, VariantProps<typeof gridStyles> {
     data: T[];
     title?: string;
-    icon?: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>;
+    icon?: Icon;
     description?: string;
     renderItem: (item: T, index: number) => ReactNode;
     renderPrefix?: () => ReactNode;

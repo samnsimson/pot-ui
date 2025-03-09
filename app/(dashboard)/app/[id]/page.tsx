@@ -1,8 +1,9 @@
 import { AppDetail } from "@/components/apps/app-detail";
 import { AppsViewContextProvider } from "@/context/apps-view-context";
 import { api } from "@/lib/api";
+import { NextPage } from "next";
 
-const AppPage = async ({ params }: any) => {
+const AppPage: NextPage = async ({ params, searchParams }: any) => {
     const { id } = await params;
     return (
         <AppsViewContextProvider appId={id}>

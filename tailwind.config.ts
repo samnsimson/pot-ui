@@ -13,7 +13,9 @@ export default {
             colors: {
                 background: "hsl(var(--background))",
                 foreground: "hsl(var(--foreground))",
-                primaryDark: {
+                success: "hsl(var(--success))",
+                info: "hsl(var(--info))",
+                "primary-dark": {
                     DEFAULT: "hsl(var(--primary-dark))",
                     foreground: "hsl(var(--primary-dark-foreground))",
                 },

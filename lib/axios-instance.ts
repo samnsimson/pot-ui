@@ -22,7 +22,7 @@ const responseCallback = (response: AxiosResponse<any, any>) => {
 
 const responseError = (error: any) => {
     console.log("🚀 ~ responseError ~ error:", error);
-    if (error.status === 401) signOut({ redirect: true, callbackUrl: "/login" });
+    if (error.status === 401) return signOut({ redirect: true, callbackUrl: "/login" });
     return Promise.reject(error);
 };
 

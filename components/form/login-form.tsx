@@ -3,29 +3,41 @@ import { FC, HTMLAttributes, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { schemas } from "@/lib/api";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { LogInIcon } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { Alert } from "../ui/alert";
 
 interface LoginFormProps extends HTMLAttributes<HTMLDivElement> {
     [x: string]: any;
 }
 
-type LoginSchema = z.infer<typeof schemas.Body_login>;
+const LoginSchema = z.object({
+    username: z.string({ required_error: "Username is required" }).min(3, "Username must be minimum 3 characters long"),
+    password: z.string({ required_error: "Password is required" }).min(3, "Password must be minimum 3 characters long"),
+});
+
+type LoginType = z.infer<typeof LoginSchema>;
 
 export const LoginForm: FC<LoginFormProps> = ({}) => {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const form = useForm<LoginSchema>({ resolver: zodResolver(schemas.Body_login), defaultValues: { username: "", password: "" } });
+    const [error, setError] = useState<string | null>(null);
+    const form = useForm<LoginType>({ resolver: zodResolver(LoginSchema), defaultValues: { username: "", password: "" } });
 
-    const login = async ({ username, password }: LoginSchema) => {
-        setIsLoading(true);
-        const result = await signIn("credentials", { redirect: false, email: username, password });
-        if (result?.ok) router.push("/");
+    const login = async ({ username, password }: LoginType) => {
+        try {
+            setIsLoading(true);
+            const result = await signIn("credentials", { redirect: false, email: username, password });
+            if (!result || !result.ok) return setError("Wrong credentials");
+            setError(null);
+            router.push("/");
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -36,7 +48,7 @@ export const LoginForm: FC<LoginFormProps> = ({}) => {
                     control={form.control}
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel htmlFor="email">Email</FormLabel>
+                            <FormLabel>Email</FormLabel>
                             <FormControl>
                                 <Input id="username" type="text" placeholder="user@example.com" autoComplete="username" {...field} />
                             </FormControl>
@@ -61,6 +73,7 @@ export const LoginForm: FC<LoginFormProps> = ({}) => {
                     <LogInIcon />
                     <span>Login</span>
                 </Button>
+                {error && <Alert variant="destructive">{error}</Alert>}
             </form>
         </Form>
     );
