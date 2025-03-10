@@ -1,44 +1,43 @@
 "use client";
 import { FC, HTMLAttributes } from "react";
 import { useForm } from "react-hook-form";
-import { Form, FormField, FormItem, FormControl } from "../ui/form";
+import { Form, FormField, FormItem, FormControl, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { CheckIcon, XIcon } from "lucide-react";
 import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 interface ContentCreateFormProps extends HTMLAttributes<HTMLDivElement> {
-    onCancel: () => void;
+    [x: string]: any;
 }
 
 const ContentCreateSchema = z.object({
-    name: z.string({ required_error: "Name is required" }),
+    name: z.string({ required_error: "Name is required" }).min(3, "Name must be minimum 2 characters long"),
 });
 
 type ContentCreateType = z.infer<typeof ContentCreateSchema>;
 
-export const ContentCreateForm: FC<ContentCreateFormProps> = ({ onCancel }) => {
-    const form = useForm<ContentCreateType>({ defaultValues: { name: "" } });
+export const ContentCreateForm: FC<ContentCreateFormProps> = ({}) => {
+    const form = useForm<ContentCreateType>({ resolver: zodResolver(ContentCreateSchema), defaultValues: { name: "" } });
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(() => {})} className="inline-flex flex-col gap-2">
+            <form onSubmit={form.handleSubmit(() => {})} className="flex flex-col gap-2">
                 <FormField
                     name="name"
                     control={form.control}
                     render={({ field }) => (
-                        <FormItem className="inline-flex">
+                        <FormItem>
+                            <FormLabel>Name</FormLabel>
                             <FormControl>
-                                <Input placeholder="Name" {...field} />
+                                <Input type="text" {...field} />
                             </FormControl>
+                            <FormMessage />
                         </FormItem>
                     )}
                 />
                 <div className="flex items-center gap-2">
-                    <Button type="button" variant="outline" onClick={onCancel} className="w-full">
-                        <XIcon size={16} />
-                    </Button>
-                    <Button type="submit" variant="outline" className="w-full">
-                        <CheckIcon size={16} />
+                    <Button type="submit" variant="success" className="w-full">
+                        Create
                     </Button>
                 </div>
             </form>

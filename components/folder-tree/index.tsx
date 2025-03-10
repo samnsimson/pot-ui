@@ -2,6 +2,7 @@
 import { FileIcon, FolderIcon, FolderOpenIcon, PencilIcon, XIcon } from "lucide-react";
 import { FC, HTMLAttributes, useState } from "react";
 import { cn } from "@/lib/utils";
+import { ClickBoundry } from "../click-boundry";
 
 interface TreeNode {
     name: string;
@@ -42,6 +43,7 @@ const FolderTree: FC<FolderTreeProps> = ({ data, className }) => {
 
 const TreeNodeComponent: React.FC<{ node: TreeNode }> = ({ node }) => {
     const [isOpen, setIsOpen] = useState(false);
+    const [activeNode, setActiveNode] = useState<string | null>(null);
 
     return (
         <div className="">
@@ -56,7 +58,7 @@ const TreeNodeComponent: React.FC<{ node: TreeNode }> = ({ node }) => {
                             <FileIcon size={16} />
                         </span>
                     )}
-                    <NodeName name={node.name} />
+                    <ClickBoundry onStateChange={(active) => setActiveNode(active ? node.name : null)}>{node.name}</ClickBoundry>
                 </div>
             </div>
 

@@ -8,8 +8,11 @@ import { Button } from "../ui/button";
 import { useSession } from "next-auth/react";
 import { roles } from "@/lib/utils";
 import { SectionTitle } from "../section-title";
-import { BoxIcon, DatabaseIcon, SettingsIcon, UsersIcon } from "lucide-react";
+import { BoxIcon, DatabaseIcon, PencilIcon, PlusIcon, SettingsIcon, TrashIcon, UsersIcon } from "lucide-react";
 import { FolderTree } from "../folder-tree";
+import { ScrollArea } from "../ui/scroll-area";
+import { useModal } from "@/context/modal-context";
+import { ContentCreateForm } from "../form/content-create-form";
 
 interface AppDetailProps extends HTMLAttributes<HTMLDivElement> {
     [x: string]: any;
@@ -17,6 +20,7 @@ interface AppDetailProps extends HTMLAttributes<HTMLDivElement> {
 
 export const AppDetail: FC<AppDetailProps> = ({ ...props }) => {
     const { appData, deleteApp, isDeleting } = useAppContext();
+    const { openModal } = useModal({ title: "New Modal", description: "New modal description", render: () => <ContentCreateForm /> });
     const { data: session } = useSession();
 
     const [folderData, setFolderData] = useState([
@@ -41,7 +45,7 @@ export const AppDetail: FC<AppDetailProps> = ({ ...props }) => {
         <div className="h-full" {...props}>
             <div className="flex flex-col h-full">
                 <SectionTitle title={appData.name} icon={BoxIcon} description={`secret: ${appData.secret}`} />
-                <Tabs defaultValue="content" className="w-full h-full">
+                <Tabs defaultValue="content" className="w-full flex flex-col flex-1">
                     <TabsList>
                         <TabsTrigger value="content">
                             <DatabaseIcon size={16} />
@@ -56,10 +60,25 @@ export const AppDetail: FC<AppDetailProps> = ({ ...props }) => {
                             <span>Settings</span>
                         </TabsTrigger>
                     </TabsList>
-                    <TabsContent value="content" className="h-full">
+                    <TabsContent value="content" className="flex-1">
                         <div className="grid grid-cols-12 h-full">
-                            <FolderTree data={folderData} className="col-span-2 border-r border-border" />
-                            <div className="col-span-10"></div>
+                            <div className="col-span-3 md:col-span-2 border-r border-border flex flex-col">
+                                <ScrollArea className="flex-1">
+                                    <FolderTree data={folderData} className="h-full" />
+                                </ScrollArea>
+                                <div className="flex divide-x border-t border-border">
+                                    <Button className="w-full rounded-none" variant="ghost" onClick={() => openModal()}>
+                                        <PlusIcon size={16} />
+                                    </Button>
+                                    <Button className="w-full rounded-none" variant="ghost">
+                                        <PencilIcon size={16} />
+                                    </Button>
+                                    <Button className="w-full rounded-none" variant="ghost">
+                                        <TrashIcon size={16} />
+                                    </Button>
+                                </div>
+                            </div>
+                            <div className="col-span-9 md:col-span-10"></div>
                         </div>
                     </TabsContent>
                     <TabsContent value="users">
