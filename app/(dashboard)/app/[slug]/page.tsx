@@ -3,10 +3,10 @@ import { AppsViewContextProvider } from "@/context/apps-view-context";
 import { api } from "@/lib/api";
 import { NextPage } from "next";
 
-const AppPage: NextPage = async ({ params, searchParams }: any) => {
-    const { id } = await params;
+const AppPage: NextPage = async ({ params }: any) => {
+    const { slug } = await params;
     return (
-        <AppsViewContextProvider appId={id}>
+        <AppsViewContextProvider slug={slug}>
             <AppDetail />
         </AppsViewContextProvider>
     );
@@ -17,5 +17,5 @@ export const dynamicParams = true;
 export const generateStaticParams = async () => {
     const { access_token } = await api.login({ username: "samnsimson@gmail.com", password: "W3lcome!" });
     const apps = await api.list_apps({ headers: { Authorization: `Bearer ${access_token}` } });
-    return apps.map((app) => ({ id: app.id }));
+    return apps.map((app) => ({ slug: app.slug }));
 };

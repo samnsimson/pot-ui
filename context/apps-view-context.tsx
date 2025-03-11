@@ -10,7 +10,7 @@ import { createContext, FC, PropsWithChildren, useContext, useMemo } from "react
 import { z } from "zod";
 
 interface AppsViewContextInterface {
-    appId: string;
+    slug: string;
     appData?: z.infer<typeof schemas.AppOutSchema>;
     error: Error | null;
     deleteApp: (id: string) => void;
@@ -18,23 +18,23 @@ interface AppsViewContextInterface {
 }
 
 interface ProviderProps extends PropsWithChildren {
-    appId: string;
+    slug: string;
 }
 
 const AppsViewContext = createContext<AppsViewContextInterface>({
-    appId: "",
+    slug: "",
     appData: undefined,
     error: null,
     deleteApp: () => {},
     isDeleting: false,
 });
 
-export const AppsViewContextProvider: FC<ProviderProps> = ({ children, appId }) => {
+export const AppsViewContextProvider: FC<ProviderProps> = ({ children, slug }) => {
     const { feedbackSuccess, feedbackFailure } = useFeedback();
     const queryClient = useQueryClient();
     const router = useRouter();
 
-    const { data, error } = useQuery({ queryKey: [queryKeys.GET_APPS_DETAIL, appId], queryFn: () => client.getApp(appId) });
+    const { data, error } = useQuery({ queryKey: [queryKeys.GET_APPS_DETAIL, slug], queryFn: () => client.getApp(slug) });
 
     const { mutate: deleteApp, isPending: isDeleting } = useMutation({
         mutationFn: (id: string) => client.deleteApp(id),
@@ -46,7 +46,7 @@ export const AppsViewContextProvider: FC<ProviderProps> = ({ children, appId }) 
         },
     });
 
-    const context = useMemo(() => ({ appId, error, deleteApp, appData: data, isDeleting }), [appId, error, deleteApp, data, isDeleting]);
+    const context = useMemo(() => ({ slug, error, deleteApp, appData: data, isDeleting }), [slug, error, deleteApp, data, isDeleting]);
 
     if (error) throw error;
     return <AppsViewContext.Provider value={context}>{children}</AppsViewContext.Provider>;

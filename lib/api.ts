@@ -102,6 +102,7 @@ const AppOutSchema = z
     .object({
         id: z.string().uuid(),
         name: z.string(),
+        slug: z.string(),
         secret: z.string(),
         is_active: z.boolean(),
         created_at: z.string().datetime({ offset: true }),
@@ -110,6 +111,7 @@ const AppOutSchema = z
     .strict()
     .passthrough();
 const AppCreateSchema = z.object({ name: z.string() }).strict().passthrough();
+const key = z.union([z.string(), z.string()]);
 const AppDeleteOutSchema = z.object({ id: z.string().uuid(), status: z.string() }).strict().passthrough();
 const ContentCreateSchema = z
     .object({ key: z.string(), value: z.union([z.unknown(), z.null()]).optional(), parent_id: z.union([z.string(), z.null()]).optional() })
@@ -153,6 +155,7 @@ export const schemas = {
     RefreshBody,
     AppOutSchema,
     AppCreateSchema,
+    key,
     AppDeleteOutSchema,
     ContentCreateSchema,
     ContentOutSchema,
@@ -177,27 +180,6 @@ const endpoints = makeApi([
                 name: "body",
                 type: "Body",
                 schema: z.object({ name: z.string() }).strict().passthrough(),
-            },
-        ],
-        response: AppOutSchema,
-        errors: [
-            {
-                status: 422,
-                description: `Validation Error`,
-                schema: HTTPValidationError,
-            },
-        ],
-    },
-    {
-        method: "get",
-        path: "/apps/:id",
-        alias: "get_app",
-        requestFormat: "json",
-        parameters: [
-            {
-                name: "id",
-                type: "Path",
-                schema: z.string().uuid(),
             },
         ],
         response: AppOutSchema,
@@ -243,6 +225,27 @@ const endpoints = makeApi([
             },
         ],
         response: z.array(UserOutSchema),
+        errors: [
+            {
+                status: 422,
+                description: `Validation Error`,
+                schema: HTTPValidationError,
+            },
+        ],
+    },
+    {
+        method: "get",
+        path: "/apps/:key",
+        alias: "get_app_by_id_or_slug",
+        requestFormat: "json",
+        parameters: [
+            {
+                name: "key",
+                type: "Path",
+                schema: key,
+            },
+        ],
+        response: AppOutSchema,
         errors: [
             {
                 status: 422,

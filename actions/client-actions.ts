@@ -11,7 +11,7 @@ const throwError = (err: AxiosError<Record<string, any>>) => {
 };
 
 export const client = {
-    getApp: async (id: string) => http.get_app({ params: { id } }).catch(throwError),
+    getApp: async (key: string) => http.get_app_by_id_or_slug({ params: { key } }).catch(throwError),
     getApps: async () => http.list_apps().catch(throwError),
     createApp: async (data: AppCreate) => http.create_app(data).catch(throwError),
     getAppUsers: async (id: string) => http.get_app_users({ params: { id } }).catch(throwError),
