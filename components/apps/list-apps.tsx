@@ -11,7 +11,6 @@ import { useDrawer } from "@/context/drawer-context";
 import { GridView } from "@/components/grid-view";
 import { useQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/constants/query-keys";
-import { App } from "@/lib/types";
 import { client } from "@/actions/client-actions";
 import { PageLoader } from "../loader/page-loader";
 

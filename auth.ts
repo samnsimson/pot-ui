@@ -11,8 +11,8 @@ export const authOptions: AuthOptions = {
                 try {
                     if (!credentials) return null;
                     const { email: username, password } = credentials;
-                    const { user_id, access_token, ...user } = await api.login({ username, password });
-                    return { id: user_id, accessToken: access_token, ...user };
+                    const { user_id, access_token, refresh_token, ...user } = await api.login({ username, password });
+                    return { id: user_id, accessToken: access_token, refreshToken: refresh_token, ...user };
                 } catch (error) {
                     return null;
                 }
@@ -21,13 +21,24 @@ export const authOptions: AuthOptions = {
     ],
     callbacks: {
         async jwt({ token, user }: any) {
-            if (!user) return token;
-            token.id = user.id;
-            token.host = user.host;
-            token.name = user.username;
-            token.role = user.role;
-            token.accessToken = user.accessToken;
-            return token;
+            if (user) {
+                const { id, host, role, accessToken, refreshToken, token_max_age } = user;
+                const tokenMaxAge = Date.now() + token_max_age * 1000;
+                return { ...token, id, host, role, accessToken, refreshToken, tokenMaxAge };
+            } else if (Date.now() < token.tokenMaxAge) {
+                return token;
+            } else {
+                try {
+                    console.log("****TOKEN EXPIRED, REFRESHING****");
+                    const refreshedToken = await api.refresh_token({ token: token.refreshToken });
+                    const { user_id, host, role, access_token: accessToken, refresh_token: refreshToken, ...refreshedTokenRest } = refreshedToken;
+                    const tokenMaxAge = Date.now() + refreshedTokenRest.token_max_age * 1000;
+                    return { ...token, host, role, id: user_id, accessToken, refreshToken, tokenMaxAge };
+                } catch (error) {
+                    console.log("🚀 ~ jwt ~ error:", error);
+                    return token;
+                }
+            }
         },
         async session({ session, token }: any) {
             if (!token) return session;

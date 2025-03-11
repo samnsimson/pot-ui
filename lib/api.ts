@@ -1,6 +1,18 @@
 import { makeApi, Zodios, type ZodiosOptions } from "@zodios/core";
 import { z } from "zod";
 
+type AuthResponseSchema = {
+    status: string;
+    user_id: string;
+    host: string;
+    role: RoleEnum;
+    redirect_url: (string | null) | Array<string | null>;
+    access_token: string;
+    refresh_token: string;
+    token_type: string;
+    token_max_age: number;
+};
+type RoleEnum = "user" | "admin" | "super_admin";
 type ContentOutSchema = {
     id: string;
     key: string;
@@ -19,18 +31,6 @@ type ValidationError = {
     msg: string;
     type: string;
 };
-type LoginResponseSchema = {
-    status: string;
-    user_id: string;
-    email: string;
-    host: string;
-    role: RoleEnum;
-    redirect_url: string;
-    access_token: string;
-    token_type: string;
-    token_max_age: number;
-};
-type RoleEnum = "user" | "admin" | "super_admin";
 type UserCreateSchema = {
     username: string;
     email: string;
@@ -55,17 +55,17 @@ const Body_login = z
     .strict()
     .passthrough();
 const RoleEnum = z.enum(["user", "admin", "super_admin"]);
-const LoginResponseSchema: z.ZodType<LoginResponseSchema> = z
+const AuthResponseSchema: z.ZodType<AuthResponseSchema> = z
     .object({
         status: z.string(),
         user_id: z.string(),
-        email: z.string(),
         host: z.string(),
         role: RoleEnum,
-        redirect_url: z.string(),
+        redirect_url: z.union([z.string(), z.null()]),
         access_token: z.string(),
+        refresh_token: z.string(),
         token_type: z.string(),
-        token_max_age: z.number().int(),
+        token_max_age: z.number(),
     })
     .strict()
     .passthrough();
@@ -97,6 +97,7 @@ const UserOutSchema = z
     })
     .strict()
     .passthrough();
+const RefreshBody = z.object({ token: z.string() }).strict().passthrough();
 const AppOutSchema = z
     .object({
         id: z.string().uuid(),
@@ -143,12 +144,13 @@ const DomainOutSchema = z
 export const schemas = {
     Body_login,
     RoleEnum,
-    LoginResponseSchema,
+    AuthResponseSchema,
     ValidationError,
     HTTPValidationError,
     DomainCreateSchema,
     UserCreateSchema,
     UserOutSchema,
+    RefreshBody,
     AppOutSchema,
     AppCreateSchema,
     AppDeleteOutSchema,
@@ -261,7 +263,7 @@ const endpoints = makeApi([
                 schema: Body_login,
             },
         ],
-        response: LoginResponseSchema,
+        response: AuthResponseSchema,
         errors: [
             {
                 status: 422,
@@ -292,11 +294,25 @@ const endpoints = makeApi([
         ],
     },
     {
-        method: "get",
+        method: "post",
         path: "/auth/token/refresh",
-        alias: "token_refresh",
+        alias: "refresh_token",
         requestFormat: "json",
-        response: LoginResponseSchema,
+        parameters: [
+            {
+                name: "body",
+                type: "Body",
+                schema: z.object({ token: z.string() }).strict().passthrough(),
+            },
+        ],
+        response: AuthResponseSchema,
+        errors: [
+            {
+                status: 422,
+                description: `Validation Error`,
+                schema: HTTPValidationError,
+            },
+        ],
     },
     {
         method: "post",

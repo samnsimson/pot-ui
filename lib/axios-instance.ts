@@ -1,6 +1,6 @@
 "use client";
 import axios, { AxiosResponse, InternalAxiosRequestConfig } from "axios";
-import { signOut } from "next-auth/react";
+import { getSession, signOut } from "next-auth/react";
 import { getToken, getTransactionId } from "./utils";
 
 const requestCallback = async (config: InternalAxiosRequestConfig<any>) => {
@@ -16,7 +16,10 @@ const requestError = (error: any) => {
     return Promise.reject(error);
 };
 
-const responseCallback = (response: AxiosResponse<any, any>) => {
+const responseCallback = async (response: AxiosResponse<any, any>) => {
+    const findCookie = (cookie: string) => cookie.startsWith("access_token=");
+    const newAccessToken = response.headers["set-cookie"]?.find(findCookie)?.split(";")[0]?.split("=")[1];
+    console.log("🚀 ~ responseCallback ~ newAccessToken:", newAccessToken);
     return Promise.resolve(response);
 };
 

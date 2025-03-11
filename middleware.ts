@@ -1,18 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { constants } from "./constants/constants";
+import { aj } from "./aj.config";
+import { forbidden } from "next/navigation";
 
-function checkAuthentication(request: NextRequest): boolean {
-    const accessToken = request.cookies.get(constants.ACCESS_TOKEN);
-    return !!accessToken;
-}
-
-export function middleware(request: NextRequest) {
-    // const { pathname } = request.nextUrl;
-    // if (pathname === "/login" || pathname === "/signup") return NextResponse.next();
-    // const isAuthenticated = checkAuthentication(request);
-    // const loginRoute = new URL("/login", request.url);
-    // if (!isAuthenticated) return NextResponse.redirect(loginRoute);
-    // return NextResponse.next();
+export async function middleware(request: NextRequest) {
+    const decision = await aj.protect(request);
+    if (decision.isDenied()) return forbidden();
+    return NextResponse.next();
 }
 
 export const config = {
