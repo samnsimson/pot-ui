@@ -11,7 +11,7 @@ import { useDrawer } from "@/context/drawer-context";
 import { GridView } from "@/components/grid-view";
 import { useQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/constants/query-keys";
-import { client } from "@/actions/client-actions";
+import { client } from "@/actions/client";
 import { PageLoader } from "../loader/page-loader";
 
 interface ListAppsProps extends HTMLAttributes<HTMLDivElement> {

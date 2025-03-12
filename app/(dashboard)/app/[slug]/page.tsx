@@ -1,14 +1,14 @@
 import { AppDetail } from "@/components/apps/app-detail";
-import { AppsViewContextProvider } from "@/context/apps-view-context";
+import { AppsContextProvider } from "@/context/apps-context";
 import { api } from "@/lib/api";
 import { NextPage } from "next";
 
 const AppPage: NextPage = async ({ params }: any) => {
     const { slug } = await params;
     return (
-        <AppsViewContextProvider slug={slug}>
+        <AppsContextProvider slug={slug}>
             <AppDetail />
-        </AppsViewContextProvider>
+        </AppsContextProvider>
     );
 };
 export default AppPage;

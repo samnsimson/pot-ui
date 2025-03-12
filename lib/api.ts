@@ -15,9 +15,9 @@ type AuthResponseSchema = {
 type RoleEnum = "user" | "admin" | "super_admin";
 type ContentOutSchema = {
     id: string;
-    key: string;
-    value?: ((unknown | null) | Array<unknown | null>) | undefined;
     app_id: string;
+    name: string;
+    data?: (({} | null) | Array<{} | null>) | undefined;
     parent_id?: ((string | null) | Array<string | null>) | undefined;
     created_at: string;
     updated_at: string;
@@ -114,16 +114,23 @@ const AppCreateSchema = z.object({ name: z.string() }).strict().passthrough();
 const key = z.union([z.string(), z.string()]);
 const AppDeleteOutSchema = z.object({ id: z.string().uuid(), status: z.string() }).strict().passthrough();
 const ContentCreateSchema = z
-    .object({ key: z.string(), value: z.union([z.unknown(), z.null()]).optional(), parent_id: z.union([z.string(), z.null()]).optional() })
+    .object({
+        name: z.string(),
+        data: z.union([z.object({}).partial().strict().passthrough(), z.null()]).optional(),
+        parent_id: z.union([z.string(), z.null()]).optional(),
+    })
     .strict()
     .passthrough();
 const ContentOutSchema: z.ZodType<ContentOutSchema> = z.lazy(() =>
     z
         .object({
             id: z.string().uuid(),
-            key: z.string(),
-            value: z.union([z.unknown(), z.null()]).optional(),
             app_id: z.string().uuid(),
+            name: z.string(),
+            data: z
+                .union([z.object({}).partial().strict().passthrough(), z.null()])
+                .optional()
+                .default({}),
             parent_id: z.union([z.string(), z.null()]).optional(),
             created_at: z.string().datetime({ offset: true }),
             updated_at: z.string().datetime({ offset: true }),

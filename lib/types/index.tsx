@@ -6,3 +6,5 @@ import { ForwardRefExoticComponent, RefAttributes } from "react";
 export type App = z.infer<typeof schemas.AppOutSchema>;
 export type AppCreate = z.infer<typeof schemas.AppCreateSchema>;
 export type Icon = ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>;
+export type ContentCreate = z.infer<typeof schemas.ContentCreateSchema>;
+export type Content = z.infer<typeof schemas.ContentOutSchema>;

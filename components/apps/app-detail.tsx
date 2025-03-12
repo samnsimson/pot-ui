@@ -1,5 +1,5 @@
 "use client";
-import { useAppContext } from "@/context/apps-view-context";
+import { useAppContext } from "@/context/apps-context";
 import { FC, HTMLAttributes, useState } from "react";
 import { PageLoader } from "../loader/page-loader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -19,25 +19,9 @@ interface AppDetailProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 export const AppDetail: FC<AppDetailProps> = ({ ...props }) => {
-    const { appData, deleteApp, isDeleting } = useAppContext();
+    const { appData, appContent, deleteApp, isDeleting } = useAppContext();
     const { openModal } = useModal({ title: "New Modal", description: "New modal description", render: () => <ContentCreateForm /> });
     const { data: session } = useSession();
-
-    const [folderData, setFolderData] = useState([
-        {
-            name: "src",
-            isFolder: true,
-            children: [
-                { name: "components", isFolder: true, children: [{ name: "Button.tsx", isFolder: false }] },
-                { name: "utils.ts", isFolder: false },
-            ],
-        },
-        {
-            name: "public",
-            isFolder: true,
-            children: [{ name: "index.html", isFolder: false }],
-        },
-    ]);
 
     if (!appData) return <PageLoader />;
 
@@ -64,7 +48,7 @@ export const AppDetail: FC<AppDetailProps> = ({ ...props }) => {
                         <div className="grid grid-cols-12 h-full">
                             <div className="col-span-3 md:col-span-2 border-r border-border flex flex-col">
                                 <ScrollArea className="flex-1">
-                                    <FolderTree data={folderData} className="h-full" />
+                                    <FolderTree data={appContent} onActiveStateChange={(prop) => console.log(prop)} className="h-full" />
                                 </ScrollArea>
                                 <div className="flex divide-x border-t border-border">
                                     <Button className="w-full rounded-none" variant="ghost" onClick={() => openModal()}>
@@ -81,10 +65,10 @@ export const AppDetail: FC<AppDetailProps> = ({ ...props }) => {
                             <div className="col-span-9 md:col-span-10"></div>
                         </div>
                     </TabsContent>
-                    <TabsContent value="users">
+                    <TabsContent value="users" className="flex-1">
                         <AppUsers appId={appData.id} />
                     </TabsContent>
-                    <TabsContent value="settings" className="gap-6">
+                    <TabsContent value="settings" className="gap-6 flex-1">
                         {roles.isSuperAdmin(session) && (
                             <Button variant="destructive" isLoading={isDeleting} onClick={() => deleteApp(appData.id)}>
                                 Delete App

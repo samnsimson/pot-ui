@@ -4,7 +4,7 @@ import { FC, HTMLAttributes } from "react";
 import { PageLoader } from "../loader/page-loader";
 import { DataTable } from "../data-table";
 import { ColumnDef } from "@tanstack/react-table";
-import { client } from "@/actions/client-actions";
+import { client } from "@/actions/client";
 
 interface AppUsersProps extends HTMLAttributes<HTMLDivElement> {
     appId: string;
