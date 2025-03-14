@@ -1,6 +1,13 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 import type { Config } from "tailwindcss";
 
+function withOpacity(variableName: string) {
+    return ({ opacityValue }: any) => {
+        if (opacityValue !== undefined) return `hsla(var(${variableName}), ${opacityValue})`;
+        return `hsl(var(${variableName}))`;
+    };
+}
+
 export default {
     darkMode: ["class"],
     content: ["./pages/**/*.{js,ts,jsx,tsx,mdx}", "./components/**/*.{js,ts,jsx,tsx,mdx}", "./app/**/*.{js,ts,jsx,tsx,mdx}"],
@@ -13,11 +20,10 @@ export default {
             colors: {
                 background: "hsl(var(--background))",
                 foreground: "hsl(var(--foreground))",
-                success: "hsl(var(--success))",
                 info: "hsl(var(--info))",
                 "primary-dark": {
-                    DEFAULT: "hsl(var(--primary-dark))",
-                    foreground: "hsl(var(--primary-dark-foreground))",
+                    DEFAULT: "hsla(var(--primary-dark))",
+                    foreground: "hsla(var(--primary-dark-foreground))",
                 },
                 card: {
                     DEFAULT: "hsl(var(--card))",
@@ -34,6 +40,10 @@ export default {
                 secondary: {
                     DEFAULT: "hsl(var(--secondary))",
                     foreground: "hsl(var(--secondary-foreground))",
+                },
+                success: {
+                    DEFAULT: "hsla(var(--success))",
+                    foreground: "hsla(var(--success-foreground))",
                 },
                 muted: {
                     DEFAULT: "hsl(var(--muted))",

@@ -14,8 +14,8 @@ export type AppModalProps = {
 export const AppModal: FC<AppModalProps> = ({ isOpen = false, title, description = null, component, footer = null, trigger }) => {
     return (
         <Dialog open={isOpen} onOpenChange={trigger}>
-            <DialogContent className="w-full max-w-2xl p-0 gap-0">
-                <DialogHeader className="p-3 border-b border-border">
+            <DialogContent className="w-full max-w-2xl p-0 gap-0 overflow-hidden">
+                <DialogHeader className="p-3 border-b border-border bg-accent">
                     <DialogTitle>{title}</DialogTitle>
                     {description && <DialogDescription>{description}</DialogDescription>}
                 </DialogHeader>

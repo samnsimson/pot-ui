@@ -44,6 +44,7 @@ body {
         --primary-dark: 266, 15%, 30%;
         --primary-dark-foreground: 0, 5%, 91%;
         --success: 170, 100%, 33%;
+        --success-foreground: 0, 5%, 91%;
         --info: 194, 48%, 44%;
     }
     .dark {

@@ -74,7 +74,7 @@ export const GridView = <T,>({
 
     return (
         <div id="ui-grid-view" className="flex flex-col">
-            <SectionTitle title={title} description={description} icon={icon} />
+            <SectionTitle sectionTitle={title} description={description} icon={icon} />
             {data.length > 0 ? (
                 <div className={cn("divide-x", gridStyles({ gap }), "grid-cols-6", className)} {...props}>
                     {renderPrefix && <div>{renderPrefix()}</div>}

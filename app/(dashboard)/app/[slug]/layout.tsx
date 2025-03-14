@@ -7,12 +7,11 @@ interface LayoutProps extends PropsWithChildren {
     [x: string]: any;
 }
 
-const AppsLayout: FC<LayoutProps> = async ({ children, params }) => {
-    const { slug } = await params;
+const AppsLayout: FC<LayoutProps> = async ({ children }) => {
     return (
-        <AppsContextProvider slug={slug}>
+        <AppsContextProvider>
             <AppHeader />
-            <AppsNavigation slug={slug} />
+            <AppsNavigation />
             <div className="h-full">{children}</div>
         </AppsContextProvider>
     );

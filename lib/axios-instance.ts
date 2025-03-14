@@ -17,9 +17,6 @@ const requestError = (error: any) => {
 };
 
 const responseCallback = async (response: AxiosResponse<any, any>) => {
-    const findCookie = (cookie: string) => cookie.startsWith("access_token=");
-    const newAccessToken = response.headers["set-cookie"]?.find(findCookie)?.split(";")[0]?.split("=")[1];
-    console.log("🚀 ~ responseCallback ~ newAccessToken:", newAccessToken);
     return Promise.resolve(response);
 };
 

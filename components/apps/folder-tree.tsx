@@ -1,10 +1,14 @@
 "use client";
-import { FileIcon, FolderIcon, FolderOpenIcon, PencilIcon, XIcon } from "lucide-react";
+import { FileIcon, FolderIcon, FolderOpenIcon, PencilIcon, PlusIcon, XIcon } from "lucide-react";
 import { FC, HTMLAttributes, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { ClickBoundry } from "../click-boundry";
 import { Content } from "@/lib/types";
 import { useAppContext } from "@/context/apps-context";
+import { Button } from "../ui/button";
+import { useModal } from "@/context/modal-context";
+import { ContentCreateForm } from "../form/content-create-form";
+import { useParams } from "next/navigation";
 
 interface FolderTreeProps extends HTMLAttributes<HTMLDivElement> {
     onActiveStateChange?: (prop: { id: string; name: string; active: boolean }) => void;
@@ -15,13 +19,34 @@ interface TreeNodeProps {
     onActiveStateChange?: (prop: { id: string; name: string; active: boolean }) => void;
 }
 
-const FolderTree: FC<FolderTreeProps> = ({ onActiveStateChange, className }) => {
-    const { appContent } = useAppContext();
+const NoContentAction: FC<{ appId: string }> = ({ appId }) => {
+    const { slug } = useParams();
+    const { openModal } = useModal({ title: "Create Content", render: () => <ContentCreateForm appId={appId} slug={slug as string} /> });
     return (
-        <div className={cn("p-2", className)}>
-            {appContent.map((node, index) => (
-                <TreeNodeComponent key={index} node={node} onActiveStateChange={onActiveStateChange} />
-            ))}
+        <div className="flex items-center justify-center h-full">
+            <div className="items-center flex flex-col gap-3">
+                <FolderOpenIcon size={42} className="text-input" />
+                <p className="font-semibold">Create new content</p>
+                <Button className="gap-3" variant="ghost" onClick={openModal}>
+                    <PlusIcon size={16} />
+                    <span>Create</span>
+                </Button>
+            </div>
+        </div>
+    );
+};
+
+const FolderTree: FC<FolderTreeProps> = ({ onActiveStateChange, className }) => {
+    const { appData, appContent } = useAppContext();
+    const isEmpty = appContent.length === 0;
+    if (!appData) return null;
+    return (
+        <div className={cn("p-2 h-full", className)}>
+            {isEmpty ? (
+                <NoContentAction appId={appData.id} />
+            ) : (
+                appContent.map((node, index) => <TreeNodeComponent key={index} node={node} onActiveStateChange={onActiveStateChange} />)
+            )}
         </div>
     );
 };

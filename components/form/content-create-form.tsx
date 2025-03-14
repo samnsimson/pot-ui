@@ -1,14 +1,25 @@
 "use client";
 import { FC, HTMLAttributes } from "react";
 import { useForm } from "react-hook-form";
-import { Form, FormField, FormItem, FormControl, FormLabel, FormMessage } from "../ui/form";
+import { Form, FormField, FormItem, FormControl, FormLabel, FormMessage, FormDescription } from "../ui/form";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { client } from "@/actions/client";
+import { useFeedback } from "@/hooks/use-feedback";
+import { ApiError } from "@/lib/types";
+import { queryKeys } from "@/constants/query-keys";
+interface ContentCreateProps {
+    appId: string;
+    name: string;
+    parentId?: string;
+}
 interface ContentCreateFormProps extends HTMLAttributes<HTMLDivElement> {
-    [x: string]: any;
+    appId: string;
+    parentId?: string;
+    slug: string;
 }
 
 const ContentCreateSchema = z.object({
@@ -17,26 +28,41 @@ const ContentCreateSchema = z.object({
 
 type ContentCreateType = z.infer<typeof ContentCreateSchema>;
 
-export const ContentCreateForm: FC<ContentCreateFormProps> = ({}) => {
+export const ContentCreateForm: FC<ContentCreateFormProps> = ({ appId, slug, parentId = undefined }) => {
+    const { feedbackSuccess, feedbackFailure } = useFeedback();
+    const queryClient = useQueryClient();
     const form = useForm<ContentCreateType>({ resolver: zodResolver(ContentCreateSchema), defaultValues: { name: "" } });
+
+    const { mutate: createAppContent, isPending: isCreatingContent } = useMutation({
+        mutationFn: ({ appId, name, parentId }: ContentCreateProps) => client.createContent(appId, { name, parentId }),
+        onError: (error: ApiError) => feedbackFailure({ title: "Oops!", description: error.response?.data.detail }),
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({ queryKey: [queryKeys.GET_APP_CONTENT, slug] });
+            feedbackSuccess({ title: "Success", description: "Content deleted successfully!" });
+        },
+    });
+
+    const handleSubmit = ({ name }: ContentCreateType) => createAppContent({ appId, parentId, name });
+
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(() => {})} className="flex flex-col gap-2">
+            <form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col gap-2">
                 <FormField
                     name="name"
                     control={form.control}
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Name</FormLabel>
+                            <FormLabel>Content Name</FormLabel>
                             <FormControl>
                                 <Input type="text" {...field} />
                             </FormControl>
+                            <FormDescription>Enter the name of the content</FormDescription>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
                 <div className="flex items-center gap-2">
-                    <Button type="submit" variant="success" className="w-full">
+                    <Button type="submit" variant="success" className="w-full" disabled={isCreatingContent} isLoading={isCreatingContent}>
                         Create
                     </Button>
                 </div>

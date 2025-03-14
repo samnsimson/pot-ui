@@ -5,11 +5,10 @@ import { queryKeys } from "@/constants/query-keys";
 import { useFeedback } from "@/hooks/use-feedback";
 import { App, AppUsers, Content } from "@/lib/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { createContext, FC, PropsWithChildren, useContext, useMemo } from "react";
 
 interface AppsContextInterface {
-    slug: string;
     appData?: App;
     appContent: Array<Content>;
     appUsers: Array<AppUsers>;
@@ -19,11 +18,10 @@ interface AppsContextInterface {
 }
 
 interface ProviderProps extends PropsWithChildren {
-    slug: string;
+    [x: string]: any;
 }
 
 const AppsContext = createContext<AppsContextInterface>({
-    slug: "",
     appData: undefined,
     appContent: [],
     appUsers: [],
@@ -32,12 +30,13 @@ const AppsContext = createContext<AppsContextInterface>({
     isDeleting: false,
 });
 
-export const AppsContextProvider: FC<ProviderProps> = ({ children, slug }) => {
-    const { feedbackSuccess, feedbackFailure } = useFeedback();
-    const queryClient = useQueryClient();
+export const AppsContextProvider: FC<ProviderProps> = ({ children }) => {
     const router = useRouter();
+    const { slug } = useParams();
+    const queryClient = useQueryClient();
+    const { feedbackSuccess, feedbackFailure } = useFeedback();
 
-    const { data: appData, error } = useQuery({ queryKey: [queryKeys.GET_APPS_DETAIL, slug], queryFn: () => client.getApp(slug) });
+    const { data: appData, error } = useQuery({ queryKey: [queryKeys.GET_APPS_DETAIL, slug], queryFn: () => client.getApp(String(slug)), enabled: !!slug });
     const { data: appContent } = useQuery({ queryKey: [queryKeys.GET_APP_CONTENT, slug], queryFn: () => client.getContent(appData!.id), enabled: !!appData });
     const { data: appUsers } = useQuery({ queryKey: [queryKeys.GET_APP_USERS, slug], queryFn: () => client.getAppUsers(appData!.id), enabled: !!appData });
 
@@ -61,4 +60,8 @@ export const AppsContextProvider: FC<ProviderProps> = ({ children, slug }) => {
     return <AppsContext.Provider value={context}>{children}</AppsContext.Provider>;
 };
 
-export const useAppContext = () => useContext(AppsContext);
+export const useAppContext = () => {
+    const context = useContext(AppsContext);
+    if (!context) throw new Error("App context cannot be used outside of the provider");
+    return context;
+};

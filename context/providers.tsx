@@ -6,7 +6,11 @@ import { FC, PropsWithChildren } from "react";
 import { ModalProvider } from "./modal-context";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 
-const Providers: FC<PropsWithChildren> = ({ children }) => {
+interface ProviderProps extends PropsWithChildren {
+    [x: string]: any;
+}
+
+const Providers: FC<ProviderProps> = ({ children }) => {
     return (
         <NuqsAdapter>
             <SessionProvider>

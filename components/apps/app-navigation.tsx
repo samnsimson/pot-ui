@@ -3,10 +3,10 @@ import { FC, HTMLAttributes } from "react";
 import { DatabaseIcon, SettingsIcon, UserIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 
 interface AppsNavigationProps extends HTMLAttributes<HTMLDivElement> {
-    slug: string;
+    [x: string]: any;
 }
 const navs = [
     {
@@ -26,10 +26,11 @@ const navs = [
     },
 ];
 
-export const AppsNavigation: FC<AppsNavigationProps> = ({ slug, ...props }) => {
+export const AppsNavigation: FC<AppsNavigationProps> = ({ ...props }) => {
+    const { slug } = useParams();
     const pathname = usePathname();
     return (
-        <div className="flex items-center min-h-12 divide-x border-b border-border bg-accent">
+        <div className="flex items-center min-h-12 divide-x border-b border-border bg-accent" {...props}>
             {navs.map(({ name, link, icon: Icon }, idx) => {
                 const fullPath = `/app/${slug}/${link}`;
                 const isActive = pathname === fullPath;
