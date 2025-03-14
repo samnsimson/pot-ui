@@ -8,3 +8,4 @@ export type AppCreate = z.infer<typeof schemas.AppCreateSchema>;
 export type Icon = ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>;
 export type ContentCreate = z.infer<typeof schemas.ContentCreateSchema>;
 export type Content = z.infer<typeof schemas.ContentOutSchema>;
+export type AppUsers = z.infer<typeof schemas.UserOutSchema>;

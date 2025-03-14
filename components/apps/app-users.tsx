@@ -1,13 +1,15 @@
 "use client";
-import { useQuery } from "@tanstack/react-query";
-import { FC, HTMLAttributes } from "react";
+import { FC, HTMLAttributes, useState } from "react";
 import { PageLoader } from "../loader/page-loader";
 import { DataTable } from "../data-table";
 import { ColumnDef } from "@tanstack/react-table";
-import { client } from "@/actions/client";
+import { useAppContext } from "@/context/apps-context";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { SearchIcon, UserPlusIcon } from "lucide-react";
 
 interface AppUsersProps extends HTMLAttributes<HTMLDivElement> {
-    appId: string;
+    slug: string;
 }
 
 type UserTableView = {
@@ -15,8 +17,9 @@ type UserTableView = {
     email: string;
 };
 
-export const AppUsers: FC<AppUsersProps> = ({ appId, ...props }) => {
-    const { data: users } = useQuery({ queryKey: ["app-users", appId], queryFn: () => client.getAppUsers(appId), enabled: true });
+export const AppUsersList: FC<AppUsersProps> = ({ slug, ...props }) => {
+    const { appUsers: users } = useAppContext();
+    const [searchTerm, setSearchTerm] = useState<string | null>(null);
 
     const columns: Array<ColumnDef<UserTableView>> = [
         {
@@ -32,7 +35,21 @@ export const AppUsers: FC<AppUsersProps> = ({ appId, ...props }) => {
     if (!users) return <PageLoader />;
     return (
         <div {...props}>
-            <DataTable columns={columns} data={users} />
+            <div className="flex items-center justify-between p-3">
+                <div className="flex items-center w-full max-w-lg">
+                    <Input type="text" placeholder="Search for users" className="rounded-none" onChange={(e) => setSearchTerm(e.target.value)} />
+                    <Button variant="success" className="rounded-none">
+                        <SearchIcon size={16} />
+                    </Button>
+                </div>
+                <div>
+                    <Button variant="link" className="gap-3">
+                        <UserPlusIcon />
+                        <span>Add Users</span>
+                    </Button>
+                </div>
+            </div>
+            <DataTable columns={columns} data={users} searchTerm={searchTerm} />
         </div>
     );
 };

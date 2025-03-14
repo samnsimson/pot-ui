@@ -4,28 +4,29 @@ import { FC, HTMLAttributes, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { ClickBoundry } from "../click-boundry";
 import { Content } from "@/lib/types";
+import { useAppContext } from "@/context/apps-context";
 
 interface FolderTreeProps extends HTMLAttributes<HTMLDivElement> {
-    data: Content[];
-    onActiveStateChange: (prop: { id: string; name: string; active: boolean }) => void;
+    onActiveStateChange?: (prop: { id: string; name: string; active: boolean }) => void;
 }
 
 interface TreeNodeProps {
     node: Content;
-    onActiveStateChange: (prop: { id: string; name: string; active: boolean }) => void;
+    onActiveStateChange?: (prop: { id: string; name: string; active: boolean }) => void;
 }
 
-const FolderTree: FC<FolderTreeProps> = ({ data, onActiveStateChange, className }) => {
+const FolderTree: FC<FolderTreeProps> = ({ onActiveStateChange, className }) => {
+    const { appContent } = useAppContext();
     return (
         <div className={cn("p-2", className)}>
-            {data.map((node, index) => (
+            {appContent.map((node, index) => (
                 <TreeNodeComponent key={index} node={node} onActiveStateChange={onActiveStateChange} />
             ))}
         </div>
     );
 };
 
-const TreeNodeComponent: React.FC<TreeNodeProps> = ({ node, onActiveStateChange }) => {
+const TreeNodeComponent: React.FC<TreeNodeProps> = ({ node, onActiveStateChange: cb }) => {
     const [isOpen, setIsOpen] = useState(false);
     const isFolder = useMemo(() => !!node.children?.length, [node]);
     return (
@@ -41,13 +42,15 @@ const TreeNodeComponent: React.FC<TreeNodeProps> = ({ node, onActiveStateChange 
                             <FileIcon size={16} />
                         </span>
                     )}
-                    <ClickBoundry onStateChange={(active) => onActiveStateChange({ id: node.id, name: node.name, active })}>{node.name}</ClickBoundry>
+                    <ClickBoundry onStateChange={(active) => cb && cb({ id: node.id, name: node.name, active })}>
+                        <span className="truncate line-clamp-1">{node.name}</span>
+                    </ClickBoundry>
                 </div>
             </div>
 
             {isOpen && node.children && (
                 <div className="ml-4 border-l-2 border-border border-dashed pl-2">
-                    {node.children.map((child, index) => child && <TreeNodeComponent key={index} node={child} onActiveStateChange={onActiveStateChange} />)}
+                    {node.children.map((child, index) => child && <TreeNodeComponent key={index} node={child} onActiveStateChange={cb} />)}
                 </div>
             )}
         </div>

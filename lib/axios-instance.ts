@@ -30,7 +30,7 @@ const responseError = (error: any) => {
 };
 
 const headers = { "Content-Type": "application/json" };
-const axiosInstance = axios.create({ headers, timeout: 1000 });
+const axiosInstance = axios.create({ headers, timeout: 5000 });
 axiosInstance.interceptors.request.use(requestCallback, requestError);
 axiosInstance.interceptors.response.use(responseCallback, responseError);
 
