@@ -86,7 +86,7 @@ export const GridView = <T,>({
                     {renderSuffix && <div>{renderSuffix()}</div>}
                 </div>
             ) : fallback ? (
-                <div className="flex flex-col items-center justify-center gap-6 h-full w-full">
+                <div className="flex h-full w-full flex-col items-center justify-center gap-6">
                     <h3>No content</h3>
                     <Button size="lg" onClick={() => fallback.action()}>
                         {fallback.text}

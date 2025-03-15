@@ -21,5 +21,5 @@ const getAppName = (app: App) => {
 
 export const AppHeader: FC<AppHeaderProps> = ({ ...props }) => {
     const { appData } = useAppContext();
-    return appData && <SectionTitle sectionTitle={getAppName(appData)} icon={BoxIcon} description={`secret: ${appData.secret}`} />;
+    return appData && <SectionTitle sectionTitle={getAppName(appData)} icon={BoxIcon} />;
 };

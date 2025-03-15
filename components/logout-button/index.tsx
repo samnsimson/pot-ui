@@ -13,7 +13,7 @@ export const LogoutButton: FC<LogoutButtonProps> = ({ className, ...props }) => 
     return (
         <Button
             variant="destructive"
-            className={cn("rounded-none w-full min-h-12 flex gap-3 items-center justify-center", className)}
+            className={cn("flex min-h-12 w-full items-center justify-center gap-3 rounded-none", className)}
             onClick={async () => await signOut({ redirect: true, callbackUrl: "/login" })}
             {...props}
         >

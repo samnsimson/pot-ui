@@ -17,8 +17,8 @@ export const AppModal: FC<AppModalProps> = ({ size = "md", isOpen = false, title
     const sizeClass = { sm: "max-w-sm", md: "max-w-md", lg: "max-w-lg", xl: "max-w-xl" };
     return (
         <Dialog open={isOpen} onOpenChange={trigger}>
-            <DialogContent className={cn("w-full p-0 gap-0 overflow-hidden", sizeClass[size])}>
-                <DialogHeader className="p-3 border-b border-border bg-accent">
+            <DialogContent className={cn("w-full gap-0 overflow-hidden p-0", sizeClass[size])}>
+                <DialogHeader className="border-b border-border bg-accent p-3">
                     <DialogTitle>{title}</DialogTitle>
                     {description && <DialogDescription>{description}</DialogDescription>}
                 </DialogHeader>

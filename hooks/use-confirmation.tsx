@@ -15,7 +15,7 @@ interface ConfirmationProps {
 }
 
 const confirmationComponent = ({ onConfirm, onCancel, cancelText, confirmText }: ConfirmationProps) => (
-    <div className="flex gap-3 w-full">
+    <div className="flex w-full gap-3">
         <Button className="w-full space-x-2 rounded-md" variant="secondary" onClick={onCancel}>
             <XIcon />
             <span>{cancelText}</span>

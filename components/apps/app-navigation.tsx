@@ -40,7 +40,7 @@ export const AppsNavigation: FC<AppsNavigationProps> = ({ ...props }) => {
     const { slug } = useParams();
     const pathname = usePathname();
     return (
-        <div className="flex items-center min-h-12 divide-x border-b border-border bg-accent" {...props}>
+        <div className="flex min-h-12 items-center divide-x border-b border-border bg-accent" {...props}>
             {navs.map(({ name, link, icon: Icon }, idx) => {
                 const fullPath = `/app/${slug}/${link}`;
                 const isActive = pathname.includes(fullPath);

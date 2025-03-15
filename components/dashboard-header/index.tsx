@@ -9,7 +9,7 @@ interface DashboardHeaderProps extends HTMLAttributes<HTMLDivElement> {
 
 export const DashboardHeader: FC<DashboardHeaderProps> = ({ ...props }) => {
     return (
-        <div className="w-full gap-6 flex items-center justify-between border-b border-border" {...props}>
+        <div className="flex w-full items-center justify-between gap-6 border-b border-border" {...props}>
             <div className="flex items-center gap-6">
                 <SidebarTrigger className="border-r border-border" />
                 <p>Header</p>

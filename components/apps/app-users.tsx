@@ -36,7 +36,7 @@ export const AppUsersList: FC<AppUsersProps> = ({ slug, ...props }) => {
     return (
         <div {...props}>
             <div className="flex items-center justify-between p-3">
-                <div className="flex items-center w-full max-w-lg">
+                <div className="flex w-full max-w-lg items-center">
                     <Input type="text" placeholder="Search for users" className="rounded-none" onChange={(e) => setSearchTerm(e.target.value)} />
                     <Button variant="success" className="rounded-none">
                         <SearchIcon size={16} />

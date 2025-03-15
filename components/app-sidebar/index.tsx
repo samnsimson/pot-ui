@@ -13,7 +13,7 @@ type SidebarLinkProp = {
 
 const SidebarLink: FC<SidebarLinkProp> = ({ text, link, icon: Icon }) => {
     return (
-        <Link href={link} className="w-full h-full min-h-12 p-3 transition-all duration-150 hover:bg-success font-semibold flex items-center gap-3">
+        <Link href={link} className="flex h-full min-h-12 w-full items-center gap-3 p-3 font-semibold transition-all duration-150 hover:bg-success">
             {Icon && <Icon size={18} />}
             <span>{text}</span>
         </Link>
@@ -24,7 +24,7 @@ export const AppSidebar = () => {
     return (
         <Sidebar>
             <SidebarHeader className="p-0">
-                <div className="p-2 border-b border-foreground min-h-12 flex items-center">
+                <div className="flex min-h-12 items-center border-b border-foreground p-2">
                     <h1>Pot CMS</h1>
                 </div>
             </SidebarHeader>
@@ -35,7 +35,7 @@ export const AppSidebar = () => {
                 <SidebarGroup />
             </SidebarContent>
             <SidebarFooter className="p-0">
-                <LogoutButton className="border-x border-destructive h-12 w-full" />
+                <LogoutButton className="h-12 w-full border-x border-destructive" />
             </SidebarFooter>
         </Sidebar>
     );

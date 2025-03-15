@@ -41,7 +41,7 @@ const FolderTree: FC<FolderTreeProps> = ({ slug, className }) => {
     if (!appData) return null;
 
     return (
-        <div className={cn("pt-4 pl-1 flex flex-col h-full", className)}>
+        <div className={cn("flex h-full flex-col pl-1 pt-4", className)}>
             <div className="flex-1 space-y-2 overflow-y-scroll">
                 {appContent.map((content) => {
                     return <TreeNode key={content.id} slug={slug as string} content={content} activeId={contentId as ContentIdType} />;
@@ -73,13 +73,13 @@ const TreeNode: FC<TreeNodeProps> = ({ slug, content, activeId }) => {
 
     return (
         <Collapsible onOpenChange={setIsOpen} className={cn("w-full space-y-2")}>
-            <div className={cn("flex items-center cursor-pointer space-x-2")}>
+            <div className={cn("flex cursor-pointer items-center space-x-2")}>
                 {isFolder && (
                     <CollapsibleTrigger asChild>
                         <ChevronRightIcon className={cn("transition-all duration-100", isOpen ? "rotate-90" : "rotate-0")} />
                     </CollapsibleTrigger>
                 )}
-                <Link href={`/app/${slug}/content?content-id=${content.id}`} className={cn("flex items-center cursor-pointer", marginClass, activeClass)}>
+                <Link href={`/app/${slug}/content?content-id=${content.id}`} className={cn("flex cursor-pointer items-center", marginClass, activeClass)}>
                     <div className="flex items-center space-x-2 transition-all hover:pl-2">
                         {isFolder ? isOpen ? <FolderOpenIcon size={16} /> : <FolderIcon size={16} /> : <FileTextIcon size={16} />}
                         <span className={cn("")}>{content.name}</span>
@@ -87,7 +87,7 @@ const TreeNode: FC<TreeNodeProps> = ({ slug, content, activeId }) => {
                 </Link>
             </div>
             {isFolder && (
-                <CollapsibleContent className="ml-3 pl-2 border-l border-border space-y-2">
+                <CollapsibleContent className="ml-3 space-y-2 border-l border-border pl-2">
                     {content.children?.map((child) => <TreeNode key={child.id} slug={slug} content={child} activeId={activeId} />)}
                 </CollapsibleContent>
             )}

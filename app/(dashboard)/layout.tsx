@@ -9,9 +9,9 @@ const DashboardLayout: FC<PropsWithChildren> = ({ children }) => {
         <SidebarProvider>
             <AppSidebar />
             <main className="w-full">
-                <div className="w-full h-screen flex flex-col">
+                <div className="flex h-screen w-full flex-col">
                     <DashboardHeader />
-                    <div className="flex-1 flex flex-col">{children}</div>
+                    <div className="flex flex-1 flex-col">{children}</div>
                 </div>
             </main>
             <Toaster />

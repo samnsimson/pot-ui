@@ -139,7 +139,7 @@ const ContentOutSchema: z.ZodType<ContentOutSchema> = z.lazy(() =>
             children: z.array(ContentOutSchema).optional().default([]),
         })
         .strict()
-        .passthrough()
+        .passthrough(),
 );
 const DomainOutSchema = z
     .object({

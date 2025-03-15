@@ -10,11 +10,11 @@ interface ErrorProp {
 
 export default function Error({ error, reset }: ErrorProp) {
     return (
-        <div className="flex flex-col flex-1  h-full gap-4 w-full text-center items-center justify-center">
+        <div className="flex h-full w-full flex-1 flex-col items-center justify-center gap-4 text-center">
             <h2>{error.message || "Something went wrong!"}</h2>
             <Button
                 variant="secondary"
-                className="rounded-none p-3 min-h-12 flex gap-3 items-center justify-center border border-gray-300 max-w-lg"
+                className="flex min-h-12 max-w-lg items-center justify-center gap-3 rounded-none border border-gray-300 p-3"
                 onClick={() => reset()}
             >
                 <RepeatIcon /> <span>Try again</span>

@@ -7,7 +7,7 @@ interface PageLoaderProps extends HTMLAttributes<HTMLDivElement> {
 
 export const PageLoader: FC<PageLoaderProps> = ({ ...props }) => {
     return (
-        <div className="h-full w-full flex flex-1 flex-col gap-6 items-center justify-center" {...props}>
+        <div className="flex h-full w-full flex-1 flex-col items-center justify-center gap-6" {...props}>
             <Loader2Icon size={52} className="animate-spin text-sky-600" />
             <h2 className="text-muted-foreground">Loading...</h2>
         </div>
