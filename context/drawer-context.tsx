@@ -1,6 +1,6 @@
 "use client";
 import { AppDrawer } from "@/components/app-drawer";
-import { createContext, FC, Fragment, PropsWithChildren, ReactElement, useContext, useRef, useState } from "react";
+import { createContext, FC, Fragment, PropsWithChildren, ReactElement, useCallback, useContext, useMemo, useState } from "react";
 
 interface RenderProps {
     isOpen: boolean;
@@ -20,19 +20,19 @@ interface DrawerContextType {
 const DrawerContext = createContext<DrawerContextType | undefined>(undefined);
 
 export const DrawerProvider: FC<PropsWithChildren> = ({ children }) => {
-    const defaultDrawerProps = { title: "", render: () => <Fragment /> };
+    const defaultDrawerProps = useMemo(() => ({ title: "", render: () => <Fragment /> }), []);
     const [isOpen, setIsOpen] = useState(false);
     const [{ title, description, render }, setDrawerProps] = useState<DrawerProps>(defaultDrawerProps);
 
-    const open = (props: DrawerProps) => {
+    const open = useCallback((props: DrawerProps) => {
         setDrawerProps(props);
         setIsOpen(true);
-    };
+    }, []);
 
-    const close = () => {
+    const close = useCallback(() => {
         setIsOpen(false);
         setTimeout(() => setDrawerProps(defaultDrawerProps), 300);
-    };
+    }, [defaultDrawerProps]);
 
     return (
         <DrawerContext.Provider value={{ open, close }}>

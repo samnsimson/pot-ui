@@ -1,9 +1,11 @@
-import { ContentActionButtons } from "@/components/content/action-buttons";
+import { ContentData } from "@/components/content/content-data";
+import { NextPage } from "next";
+import { PropsWithChildren } from "react";
 
-const ContentPage = () => {
+const ContentPage: NextPage<PropsWithChildren> = ({}) => {
     return (
-        <div>
-            <ContentActionButtons />
+        <div className="flex-1">
+            <ContentData />
         </div>
     );
 };

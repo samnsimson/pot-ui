@@ -17,6 +17,7 @@ type ContentOutSchema = {
     id: string;
     app_id: string;
     name: string;
+    slug: string;
     data?: (({} | null) | Array<{} | null>) | undefined;
     parent_id?: ((string | null) | Array<string | null>) | undefined;
     created_at: string;
@@ -127,6 +128,7 @@ const ContentOutSchema: z.ZodType<ContentOutSchema> = z.lazy(() =>
             id: z.string().uuid(),
             app_id: z.string().uuid(),
             name: z.string(),
+            slug: z.string(),
             data: z
                 .union([z.object({}).partial().strict().passthrough(), z.null()])
                 .optional()

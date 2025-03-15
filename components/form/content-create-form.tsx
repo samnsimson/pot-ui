@@ -29,14 +29,15 @@ const ContentCreateSchema = z.object({
 type ContentCreateType = z.infer<typeof ContentCreateSchema>;
 
 export const ContentCreateForm: FC<ContentCreateFormProps> = ({ appId = "", slug, parentId = undefined }) => {
-    const { feedbackSuccess, feedbackFailure } = useFeedback();
     const queryClient = useQueryClient();
+    const { feedbackSuccess, feedbackFailure } = useFeedback();
     const form = useForm<ContentCreateType>({ resolver: zodResolver(ContentCreateSchema), defaultValues: { name: "" } });
 
     const { mutate: createAppContent, isPending: isCreatingContent } = useMutation({
-        mutationFn: ({ appId, name, parentId }: ContentCreateProps) => client.createContent(appId, { name, parentId }),
+        mutationFn: ({ appId, name, parentId }: ContentCreateProps) => client.createContent(appId, { name, parent_id: parentId }),
         onError: (error: ApiError) => feedbackFailure({ title: "Oops!", description: error.response?.data.detail }),
         onSuccess: (data) => {
+            form.reset({ name: "" });
             queryClient.invalidateQueries({ queryKey: [queryKeys.GET_APP_CONTENT, slug] });
             feedbackSuccess({ title: "Success", description: "Content deleted successfully!" });
         },
@@ -62,7 +63,7 @@ export const ContentCreateForm: FC<ContentCreateFormProps> = ({ appId = "", slug
                     )}
                 />
                 <div className="flex items-center gap-2">
-                    <Button type="submit" variant="success" className="w-full" disabled={isCreatingContent} isLoading={isCreatingContent}>
+                    <Button type="submit" variant="success" className="w-full rounded-md" disabled={isCreatingContent} isLoading={isCreatingContent}>
                         Create
                     </Button>
                 </div>

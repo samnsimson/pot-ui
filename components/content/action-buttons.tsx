@@ -18,16 +18,16 @@ export const ContentActionButtons: FC<ContentActionButtonsProps> = ({ ...props }
                     <span>Cancel</span>
                 </Button>
             ) : (
-                <Button variant={action === "edit" ? "secondary" : "muted"} className="gap-2" onClick={() => setAction("edit")}>
+                <Button variant={action === "edit" ? "secondary" : "ghost"} className="gap-2" onClick={() => setAction("edit")}>
                     <PencilIcon size={16} />
                     <span>Edit</span>
                 </Button>
             )}
-            <Button variant={action === "save" ? "secondary" : "muted"} className="gap-2" onClick={() => setAction("save")}>
+            <Button variant={action === "save" ? "secondary" : "ghost"} className="gap-2" onClick={() => setAction("save")}>
                 <SaveIcon size={16} />
                 <span>Save</span>
             </Button>
-            <Button variant={action === "publish" ? "secondary" : "muted"} className="gap-2" onClick={() => setAction("publish")}>
+            <Button variant={action === "publish" ? "secondary" : "ghost"} className="gap-2" onClick={() => setAction("publish")}>
                 <NewspaperIcon size={16} />
                 <span>Publish</span>
             </Button>
