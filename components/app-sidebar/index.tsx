@@ -3,6 +3,7 @@ import { Icon } from "@/lib/types";
 import { HomeIcon } from "lucide-react";
 import Link from "next/link";
 import { FC } from "react";
+import { LogoutButton } from "../logout-button";
 
 type SidebarLinkProp = {
     text: string;
@@ -33,7 +34,9 @@ export const AppSidebar = () => {
                 </SidebarGroup>
                 <SidebarGroup />
             </SidebarContent>
-            <SidebarFooter />
+            <SidebarFooter className="p-0">
+                <LogoutButton className="border-x border-destructive h-12 w-full" />
+            </SidebarFooter>
         </Sidebar>
     );
 };

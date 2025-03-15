@@ -38,7 +38,7 @@ const AppComponent: FC<AppComponentProps> = ({ app }) => {
 const SuffixComponent: FC<{ trigger: () => void }> = ({ trigger }) => {
     return (
         <AspectRatio ratio={1 / 1}>
-            <Button variant="secondary" className="flex flex-col items-center justify-center h-full w-full gap-3 rounded-none" onClick={() => trigger()}>
+            <Button variant="ghost" className="flex flex-col items-center justify-center h-full w-full gap-3 rounded-none" onClick={() => trigger()}>
                 <PlusCircleIcon size={48} className="text-gray-400" />
                 <p>Create New App</p>
             </Button>

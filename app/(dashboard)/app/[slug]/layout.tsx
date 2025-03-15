@@ -10,9 +10,11 @@ interface LayoutProps extends PropsWithChildren {
 const AppsLayout: FC<LayoutProps> = async ({ children }) => {
     return (
         <AppsContextProvider>
-            <AppHeader />
-            <AppsNavigation />
-            <div className="h-full">{children}</div>
+            <div id="header">
+                <AppHeader />
+                <AppsNavigation />
+            </div>
+            <div className="flex-1">{children}</div>
         </AppsContextProvider>
     );
 };

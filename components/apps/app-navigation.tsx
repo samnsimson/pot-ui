@@ -1,6 +1,6 @@
 "use client";
 import { FC, HTMLAttributes } from "react";
-import { DatabaseIcon, SettingsIcon, UserIcon } from "lucide-react";
+import { CodeIcon, FilesIcon, ImagesIcon, SettingsIcon, UserIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
@@ -11,8 +11,18 @@ interface AppsNavigationProps extends HTMLAttributes<HTMLDivElement> {
 const navs = [
     {
         name: "Content",
-        icon: DatabaseIcon,
+        icon: CodeIcon,
         link: "content",
+    },
+    {
+        name: "Documents",
+        icon: FilesIcon,
+        link: "documents",
+    },
+    {
+        name: "Media",
+        icon: ImagesIcon,
+        link: "media",
     },
     {
         name: "Users",

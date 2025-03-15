@@ -1,6 +1,7 @@
 import { FC, HTMLAttributes } from "react";
 import { SidebarTrigger } from "../ui/sidebar";
-import { LogoutButton } from "../logout-button";
+import { Button } from "../ui/button";
+import { UserCircleIcon } from "lucide-react";
 
 interface DashboardHeaderProps extends HTMLAttributes<HTMLDivElement> {
     [x: string]: any;
@@ -14,7 +15,9 @@ export const DashboardHeader: FC<DashboardHeaderProps> = ({ ...props }) => {
                 <p>Header</p>
             </div>
             <div className="flex items-center">
-                <LogoutButton className="border-x border-destructive h-12" />
+                <Button className="space-x-2" variant="ghost">
+                    <UserCircleIcon /> <span>My Account</span>
+                </Button>
             </div>
         </div>
     );

@@ -1,11 +1,12 @@
 "use client";
+import { cn } from "@/lib/utils";
 import { FC, HTMLAttributes, useEffect, useRef, useState } from "react";
 
 interface ClickBoundryProps extends HTMLAttributes<HTMLDivElement> {
     onStateChange: (state: boolean) => void;
 }
 
-export const ClickBoundry: FC<ClickBoundryProps> = ({ children, onStateChange }) => {
+export const ClickBoundry: FC<ClickBoundryProps> = ({ children, onStateChange, className }) => {
     const [active, setActive] = useState<boolean>(false);
     const wrapperRef = useRef<any>(null);
 
@@ -20,7 +21,7 @@ export const ClickBoundry: FC<ClickBoundryProps> = ({ children, onStateChange })
     useEffect(() => onStateChange(active), [active, onStateChange]);
 
     return (
-        <div ref={wrapperRef} onClick={handleClickInside}>
+        <div ref={wrapperRef} onClick={handleClickInside} className={cn(className)}>
             {children}
         </div>
     );

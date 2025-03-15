@@ -11,7 +11,7 @@ const DashboardLayout: FC<PropsWithChildren> = ({ children }) => {
             <main className="w-full">
                 <div className="w-full h-screen flex flex-col">
                     <DashboardHeader />
-                    <div className="flex-1">{children}</div>
+                    <div className="flex-1 flex flex-col">{children}</div>
                 </div>
             </main>
             <Toaster />

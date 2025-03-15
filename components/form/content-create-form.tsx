@@ -17,7 +17,7 @@ interface ContentCreateProps {
     parentId?: string;
 }
 interface ContentCreateFormProps extends HTMLAttributes<HTMLDivElement> {
-    appId: string;
+    appId?: string | undefined;
     parentId?: string;
     slug: string;
 }
@@ -28,7 +28,7 @@ const ContentCreateSchema = z.object({
 
 type ContentCreateType = z.infer<typeof ContentCreateSchema>;
 
-export const ContentCreateForm: FC<ContentCreateFormProps> = ({ appId, slug, parentId = undefined }) => {
+export const ContentCreateForm: FC<ContentCreateFormProps> = ({ appId = "", slug, parentId = undefined }) => {
     const { feedbackSuccess, feedbackFailure } = useFeedback();
     const queryClient = useQueryClient();
     const form = useForm<ContentCreateType>({ resolver: zodResolver(ContentCreateSchema), defaultValues: { name: "" } });
@@ -42,7 +42,7 @@ export const ContentCreateForm: FC<ContentCreateFormProps> = ({ appId, slug, par
         },
     });
 
-    const handleSubmit = ({ name }: ContentCreateType) => createAppContent({ appId, parentId, name });
+    const handleSubmit = ({ name }: ContentCreateType) => appId && createAppContent({ appId, parentId, name });
 
     return (
         <Form {...form}>
