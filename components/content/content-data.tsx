@@ -7,6 +7,7 @@ import { Content } from "@/lib/types";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { TrashIcon } from "lucide-react";
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 
 interface ContentDataProps extends HTMLAttributes<HTMLDivElement> {
     [x: string]: any;
@@ -50,22 +51,29 @@ export const ContentData: FC<ContentDataProps> = ({ ...props }) => {
         <div {...props}>
             <ContentActionButtons />
             <div className="divide-y border-b border-border">
-                <div className="flex divide-x bg-accent">
-                    <div className="min-w-xl p-3 font-semibold">Key</div>
-                    <div className="flex-1 p-3 font-semibold">Value</div>
-                    <div className="p-3 font-semibold">Action</div>
-                </div>
-                {Object.entries(contentData).map(([key, value], index) => (
-                    <div key={index} className="flex divide-x">
-                        <div className="max-w-xl p-3">{isEditing ? <Input type="text" defaultValue={key} /> : key}</div>
-                        <div className="flex-1 p-3">{isEditing ? <Input type="text" defaultValue={value} /> : value}</div>
-                        <div className="p-3">
-                            <Button variant="ghost" className="h-8 w-8 rounded-md p-0">
-                                <TrashIcon width={16} height={16} />
-                            </Button>
-                        </div>
-                    </div>
-                ))}
+                <Table>
+                    <TableCaption className="m-0 border-t border-border bg-accent p-3">Your content</TableCaption>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>Key</TableHead>
+                            <TableHead>Value</TableHead>
+                            <TableHead className="text-right">Action</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {Object.entries(contentData).map(([key, value], index) => (
+                            <TableRow key={index}>
+                                <TableCell width={360}>{isEditing ? <Input type="text" defaultValue={key} /> : key}</TableCell>
+                                <TableCell>{isEditing ? <Input type="text" defaultValue={value} /> : value}</TableCell>
+                                <TableCell width={120} align="right">
+                                    <Button variant="outline" className="h-8 w-8 rounded-md p-0">
+                                        <TrashIcon width={16} height={16} />
+                                    </Button>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
             </div>
         </div>
     );
