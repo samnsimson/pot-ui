@@ -1,7 +1,7 @@
 "use client";
 import { cva, VariantProps } from "class-variance-authority";
 import { HTMLAttributes, ReactNode } from "react";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { SectionTitle } from "../section-title";
 import { Icon } from "@/lib/types";

@@ -37,8 +37,8 @@ const getContentData = (content: Array<Content> | undefined, id: string): Conten
 };
 
 export const ContentData: FC<ContentDataProps> = ({ ...props }) => {
-    const [contentId] = useQueryState("content-id");
-    const [action] = useQueryState("action");
+    const [contentId] = useQueryState("id");
+    const [action, setAction] = useQueryState("action");
     const { appData, appContent } = useAppContext();
     const [contentData, setContentData] = useState<ContentData | undefined>(undefined);
     const [expandedCell, setExpandedCell] = useState<string | null>(null);
@@ -61,7 +61,7 @@ export const ContentData: FC<ContentDataProps> = ({ ...props }) => {
 
     if (!appData) return <PageLoader />;
     if (contentData === undefined) return <p>Select a content</p>;
-    if (contentData === null) return <NoContentData />;
+    if (contentData === null) return <NoContentData action={setAction} />;
 
     return (
         <div {...props}>

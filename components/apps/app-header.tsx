@@ -4,7 +4,7 @@ import { FC, HTMLAttributes } from "react";
 import { SectionTitle } from "../section-title";
 import { BoxIcon } from "lucide-react";
 import { App } from "@/lib/types";
-import { Badge } from "../ui/badge";
+import { Badge } from "@/components/ui/badge";
 
 interface AppHeaderProps extends HTMLAttributes<HTMLDivElement> {
     [x: string]: any;

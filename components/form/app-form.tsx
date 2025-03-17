@@ -1,18 +1,18 @@
 "use client";
 import { FC, HTMLAttributes, useState } from "react";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { schemas } from "@/lib/api";
 import { z } from "zod";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "@/constants/query-keys";
 import { useFeedback } from "@/hooks/use-feedback";
 import { client } from "@/actions/client";
 import { AxiosError } from "axios";
-import { Alert } from "../ui/alert";
+import { Alert } from "@/components/ui/alert";
 
 type AppCreate = z.infer<typeof schemas.AppCreateSchema>;
 type App = z.infer<typeof schemas.AppOutSchema>;

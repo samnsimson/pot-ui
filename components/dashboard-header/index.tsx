@@ -1,7 +1,7 @@
 "use client";
 import { FC, HTMLAttributes } from "react";
-import { SidebarTrigger } from "../ui/sidebar";
-import { Button } from "../ui/button";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
 import { UserCircleIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";

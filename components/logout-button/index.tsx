@@ -1,6 +1,6 @@
 "use client";
 import { FC, HTMLAttributes } from "react";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { LogOutIcon } from "lucide-react";
 import { signOut } from "next-auth/react";

@@ -1,6 +1,6 @@
 "use client";
 import { FC, HTMLAttributes, ReactElement } from "react";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "../ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 
 interface AppDrawerProps extends HTMLAttributes<HTMLDivElement> {
     size?: "small" | "medium" | "large";

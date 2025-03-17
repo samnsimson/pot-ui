@@ -4,8 +4,8 @@ import { PageLoader } from "../loader/page-loader";
 import { DataTable } from "../data-table";
 import { ColumnDef } from "@tanstack/react-table";
 import { useAppContext } from "@/context/apps-context";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { SearchIcon, UserPlusIcon } from "lucide-react";
 
 interface AppUsersProps extends HTMLAttributes<HTMLDivElement> {

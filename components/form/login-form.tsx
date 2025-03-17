@@ -3,13 +3,13 @@ import { FC, HTMLAttributes, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { LogInIcon } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Alert } from "../ui/alert";
+import { Alert } from "@/components/ui/alert";
 
 interface LoginFormProps extends HTMLAttributes<HTMLDivElement> {
     [x: string]: any;
