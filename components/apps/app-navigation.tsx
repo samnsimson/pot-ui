@@ -42,11 +42,11 @@ export const AppsNavigation: FC<AppsNavigationProps> = ({ ...props }) => {
     return (
         <div className="flex min-h-12 items-center divide-x border-b border-border bg-accent" {...props}>
             {navs.map(({ name, link, icon: Icon }, idx) => {
-                const fullPath = `/app/${slug}/${link}`;
+                const fullPath = `/dashboard/app/${slug}/${link}`;
                 const isActive = pathname.includes(fullPath);
                 return (
                     <Button key={idx} className="rounded-none font-semibold" variant={isActive ? "success" : "muted"} asChild>
-                        <Link href={`/app/${slug}/${link}`} className="inline-flex items-center gap-3">
+                        <Link href={`/dashboard/app/${slug}/${link}`} className="inline-flex items-center gap-3">
                             <Icon size={18} /> <span>{name}</span>
                         </Link>
                     </Button>

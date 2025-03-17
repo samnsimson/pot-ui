@@ -17,7 +17,7 @@ export const ContentActionButtons: FC<ContentActionButtonsProps> = ({ ...props }
                 {isEditing ? (
                     <Fragment>
                         <Button variant="secondary" className="gap-2" onClick={() => setAction(null)}>
-                            <XIcon size={16} />
+                            <XIcon size={16} className="text-destructive" />
                             <span>Cancel</span>
                         </Button>
                         <Button variant="ghost" className="gap-2" disabled={!isEditing}>

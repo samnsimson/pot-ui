@@ -3,7 +3,6 @@ import { SessionProvider } from "next-auth/react";
 import { DrawerProvider } from "@/context/drawer-context";
 import { QueryProvider } from "@/context/query-client-provider";
 import { FC, PropsWithChildren } from "react";
-import { ModalProvider } from "./modal-context";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 interface ProviderProps extends PropsWithChildren {
@@ -15,9 +14,7 @@ const Providers: FC<ProviderProps> = ({ children }) => {
         <NuqsAdapter>
             <SessionProvider>
                 <QueryProvider>
-                    <ModalProvider>
-                        <DrawerProvider>{children}</DrawerProvider>
-                    </ModalProvider>
+                    <DrawerProvider>{children}</DrawerProvider>
                 </QueryProvider>
             </SessionProvider>
         </NuqsAdapter>

@@ -38,11 +38,23 @@ export const ContentData: FC<ContentDataProps> = ({ ...props }) => {
     const [action] = useQueryState("action");
     const { appContent } = useAppContext();
     const [contentData, setContentData] = useState<ContentData | undefined>(undefined);
+    const [expandedCell, setExpandedCell] = useState<string | null>(null);
     const isEditing = useMemo(() => action === "edit", [action]);
 
-    useEffect(() => {
-        setContentData(contentId ? getContentData(appContent, contentId) : undefined);
-    }, [contentId, appContent]);
+    useEffect(() => setContentData(contentId ? getContentData(appContent, contentId) : undefined), [contentId, appContent]);
+
+    const truncatedValue = (key: string, text: string) => {
+        const isExpanded = expandedCell === key;
+        return (
+            <div
+                className={`${isExpanded ? "" : "truncate"} cursor-pointer`}
+                title={isExpanded ? "" : text}
+                onClick={() => setExpandedCell(isExpanded ? null : key)}
+            >
+                {text}
+            </div>
+        );
+    };
 
     if (contentData === undefined) return <p>Select a content</p>;
     if (contentData === null) return <p>No Data</p>;
@@ -51,22 +63,26 @@ export const ContentData: FC<ContentDataProps> = ({ ...props }) => {
         <div {...props}>
             <ContentActionButtons />
             <div className="divide-y border-b border-border">
-                <Table>
+                <Table className="w-full table-fixed">
                     <TableCaption className="m-0 border-t border-border bg-accent p-3">Your content</TableCaption>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Key</TableHead>
-                            <TableHead>Value</TableHead>
-                            <TableHead className="text-right">Action</TableHead>
+                            <TableHead className="w-[30%]">Key</TableHead>
+                            <TableHead className="w-[60%]">Value</TableHead>
+                            <TableHead className="w-[10%] text-right">Actions</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {Object.entries(contentData).map(([key, value], index) => (
                             <TableRow key={index}>
-                                <TableCell width={360}>{isEditing ? <Input type="text" defaultValue={key} /> : key}</TableCell>
-                                <TableCell>{isEditing ? <Input type="text" defaultValue={value} /> : value}</TableCell>
-                                <TableCell width={120} align="right">
-                                    <Button variant="outline" className="h-8 w-8 rounded-md p-0">
+                                <TableCell className="w-[30%]">
+                                    {isEditing ? <Input type="text" defaultValue={key} /> : truncatedValue(`key-${index}`, key)}
+                                </TableCell>
+                                <TableCell className="w-[60%]">
+                                    {isEditing ? <Input type="text" defaultValue={value} /> : truncatedValue(`value-${index}`, value)}
+                                </TableCell>
+                                <TableCell className="w-[10%] text-right">
+                                    <Button variant="ghost" className="h-8 w-8 rounded-md p-0">
                                         <TrashIcon width={16} height={16} />
                                     </Button>
                                 </TableCell>

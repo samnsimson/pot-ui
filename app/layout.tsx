@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Poppins, Montserrat } from "next/font/google";
-
-import "./globals.css";
 import Providers from "@/context/providers";
+import { ThemeProvider } from "@/context/theme-provider";
+import "./globals.css";
 
 const poppins = Poppins({ variable: "--font-poppins", subsets: ["latin"], weight: ["200", "400", "700"] });
 const montserrat = Montserrat({ variable: "--font-montserrat", subsets: ["latin"], weight: ["400", "700", "800"] });
@@ -16,7 +16,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     return (
         <html lang="en">
             <body className={`${poppins.className} ${montserrat.className} antialiased`}>
+                {/* <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}> */}
                 <Providers>{children}</Providers>
+                {/* </ThemeProvider> */}
             </body>
         </html>
     );

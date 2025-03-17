@@ -30,7 +30,7 @@ export const AppSidebar = () => {
             </SidebarHeader>
             <SidebarContent>
                 <SidebarGroup className="p-0">
-                    <SidebarLink link="/" text="Home" icon={HomeIcon} />
+                    <SidebarLink link="/dashboard" text="Home" icon={HomeIcon} />
                 </SidebarGroup>
                 <SidebarGroup />
             </SidebarContent>

@@ -26,7 +26,7 @@ const AppComponent: FC<AppComponentProps> = ({ app }) => {
     return (
         <div className="group p-6">
             <AspectRatio ratio={1 / 1}>
-                <Link href={`app/${app.slug}/content`} className="flex h-full w-full flex-col items-center justify-center gap-3">
+                <Link href={`/dashboard/app/${app.slug}/content`} className="flex h-full w-full flex-col items-center justify-center gap-3">
                     <FolderIcon size={48} className="text-border group-hover:text-sky-300" />
                     <p className="line-clamp-1 overflow-hidden text-ellipsis text-center group-hover:text-sky-500">{app.name}</p>
                 </Link>
