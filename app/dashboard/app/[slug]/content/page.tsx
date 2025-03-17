@@ -4,7 +4,7 @@ import { PropsWithChildren } from "react";
 
 const ContentPage: NextPage<PropsWithChildren> = ({}) => {
     return (
-        <div className="flex-1">
+        <div className="h-full flex-1">
             <ContentData />
         </div>
     );

@@ -10,6 +10,7 @@ import { TrashIcon } from "lucide-react";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { CopyButton } from "@/components/copy-button";
 import { PageLoader } from "@/components/loader/page-loader";
+import { NoContentData } from "./no-content-data";
 
 interface ContentDataProps extends HTMLAttributes<HTMLDivElement> {
     [x: string]: any;
@@ -60,7 +61,7 @@ export const ContentData: FC<ContentDataProps> = ({ ...props }) => {
 
     if (!appData) return <PageLoader />;
     if (contentData === undefined) return <p>Select a content</p>;
-    if (contentData === null) return <p>No Data</p>;
+    if (contentData === null) return <NoContentData />;
 
     return (
         <div {...props}>
