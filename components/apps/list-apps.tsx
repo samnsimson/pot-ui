@@ -1,73 +1,89 @@
 "use client";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { FolderIcon, LayoutGridIcon, PlusCircleIcon } from "lucide-react";
-import Link from "next/link";
-import { FC, HTMLAttributes } from "react";
-import { schemas } from "@/lib/api";
-import { z } from "zod";
+import { BoxIcon, PlusCircleIcon } from "lucide-react";
+import { FC, HTMLAttributes, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CreateAppComponent } from "@/components/create-app";
 import { useDrawer } from "@/context/drawer-context";
-import { GridView } from "@/components/grid-view";
 import { useQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/constants/query-keys";
 import { client } from "@/actions/client";
 import { PageLoader } from "../loader/page-loader";
+import { Card } from "../ui/card";
+import { useQueryState } from "nuqs";
+import { ErrorCard } from "../error-card";
+import { Input } from "../ui/input";
+import { AppCard } from "./app-card";
+import { EmptyApps } from "./empty-apps";
+import { ViewToggle } from "./view-toggle";
+import { App } from "@/lib/types";
+import { SectionTitle } from "../section-title";
 
 interface ListAppsProps extends HTMLAttributes<HTMLDivElement> {
     [x: string]: any;
 }
 
-interface AppComponentProps extends HTMLAttributes<HTMLDivElement> {
-    app: z.infer<typeof schemas.AppOutSchema>;
-}
-
-const AppComponent: FC<AppComponentProps> = ({ app }) => {
-    return (
-        <div className="group p-6">
-            <AspectRatio ratio={1 / 1}>
-                <Link href={`/dashboard/app/${app.slug}/content`} className="flex h-full w-full flex-col items-center justify-center gap-3">
-                    <FolderIcon size={48} className="text-border group-hover:text-sky-300" />
-                    <p className="line-clamp-1 overflow-hidden text-ellipsis text-center group-hover:text-sky-500">{app.name}</p>
-                </Link>
-            </AspectRatio>
-        </div>
-    );
-};
-
-const SuffixComponent: FC<{ trigger: () => void }> = ({ trigger }) => {
-    return (
-        <AspectRatio ratio={1 / 1}>
-            <Button variant="ghost" className="flex h-full w-full flex-col items-center justify-center gap-3 rounded-none" onClick={() => trigger()}>
-                <PlusCircleIcon size={48} className="text-gray-400" />
-                <p>Create New App</p>
-            </Button>
-        </AspectRatio>
-    );
-};
-
 export const ListApps: FC<ListAppsProps> = ({ ...props }) => {
     const title = "Create New App";
     const description = "Create a new app";
+    const [viewMode, setViewMode] = useState<"grid" | "list">(() => (localStorage.getItem("viewMode") as any) ?? "grid");
+    const [searchQuery, setSearchQuery] = useQueryState("q");
     const { openDrawer } = useDrawer({ title, description, render: ({ isOpen }) => <CreateAppComponent isOpen={isOpen} /> });
-    const { data, isLoading } = useQuery({ queryKey: [queryKeys.GET_APPS], queryFn: client.getApps });
+    const { data, isLoading, isError } = useQuery({ queryKey: [queryKeys.GET_APPS], queryFn: client.getApps });
+
+    const appsList = useMemo(() => {
+        if (data && !searchQuery) return data;
+        if (data && searchQuery) {
+            return data.filter((app) => {
+                const includesAppName = app.name.toLowerCase().includes(searchQuery.toLowerCase());
+                const includesAppSlug = app.slug.toLowerCase().includes(searchQuery.toLowerCase());
+                return includesAppName || includesAppSlug;
+            });
+        }
+    }, [data, searchQuery]);
+
+    const handleEditApp = (app: App) => {
+        console.log("Edit app:", app);
+    };
+
+    const handleDeleteApp = (app: App) => {
+        console.log("Delete app:", app);
+    };
 
     if (!data) return <PageLoader />;
+    if (isError) return <ErrorCard />;
+    if (!data.length) return <EmptyApps onCreateApp={openDrawer} />;
 
     return (
-        <div {...props}>
-            <GridView
-                gap="none"
-                data={data}
-                title="Apps"
-                isLoading={isLoading}
-                icon={LayoutGridIcon}
-                columns={{ sm: 2, md: 6 }}
-                renderItem={(app) => <AppComponent app={app} />}
-                description="List of all the apps from the website"
-                renderSuffix={() => <SuffixComponent trigger={openDrawer} />}
-                fallback={{ text: "Create App", action: openDrawer }}
-            />
+        <div className="space-y-6" {...props}>
+            <SectionTitle icon={BoxIcon} sectionTitle="Apps" description="Manage your content apps" />
+            <div className="flex w-full items-center justify-between gap-3 px-4">
+                <Input placeholder="Search apps..." className="max-w-xl" value={searchQuery || ""} onChange={(e) => setSearchQuery(e.target.value || null)} />
+                <div className="flex items-center space-x-3">
+                    <ViewToggle onChange={setViewMode} defaultMode={viewMode} />
+                    <Button variant="success" onClick={openDrawer}>
+                        <PlusCircleIcon size={16} />
+                        <span>Create new app</span>
+                    </Button>
+                </div>
+            </div>
+
+            <div className="px-4">
+                {appsList?.length === 0 && searchQuery ? (
+                    <Card className="p-8 text-center">
+                        <p className="text-muted-foreground">No apps found matching &quot;{searchQuery}&quot;</p>
+                    </Card>
+                ) : (
+                    <div
+                        className={
+                            viewMode === "grid"
+                                ? "grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6"
+                                : "grid grid-cols-1 gap-3"
+                        }
+                    >
+                        {appsList?.map((app) => <AppCard key={app.id} app={app} viewMode={viewMode} onEdit={handleEditApp} onDelete={handleDeleteApp} />)}
+                    </div>
+                )}
+            </div>
         </div>
     );
 };
