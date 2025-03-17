@@ -28,3 +28,7 @@ export const roles = {
         return session.role === "super_admin";
     },
 };
+
+export const isCurrentPath = (pathname: string | null, currentpath: string) => {
+    return !!pathname && (pathname === currentpath || pathname.startsWith(currentpath));
+};

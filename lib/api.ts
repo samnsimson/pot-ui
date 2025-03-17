@@ -60,7 +60,7 @@ const AppCreateSchema = z.object({ name: z.string() }).strict().passthrough();
 const key = z.union([z.string(), z.string()]);
 const AppDeleteOutSchema = z.object({ id: z.string().uuid(), status: z.string() }).strict().passthrough();
 const ContentCreateSchema = z.object({ name: z.string(), data: z.union([z.object({}).partial().strict().passthrough(), z.null()]).optional(), parent_id: z.union([z.string(), z.null()]).optional() }).strict().passthrough();
-const ContentOutSchema: z.ZodType<ContentOutSchema> = z.lazy(() => z.object({ id: z.string().uuid(), app_id: z.string().uuid(), name: z.string(), slug: z.string(), data: z.union([z.object({}).partial().strict().passthrough(), z.null()]).optional().default({}), parent_id: z.union([z.string(), z.null()]).optional(), created_at: z.string().datetime({ offset: true }), updated_at: z.string().datetime({ offset: true }), children: z.array(ContentOutSchema).optional().default([]) }).strict().passthrough());
+const ContentOutSchema: z.ZodType<ContentOutSchema> = z.lazy(() => z.object({ id: z.string().uuid(), app_id: z.string().uuid(), name: z.string(), slug: z.string(), data: z.union([z.object({}).partial().strict().passthrough(), z.null()]).optional(), parent_id: z.union([z.string(), z.null()]).optional(), created_at: z.string().datetime({ offset: true }), updated_at: z.string().datetime({ offset: true }), children: z.array(ContentOutSchema).optional().default([]) }).strict().passthrough());
 const ContentUpdateSchema = z.object({ name: z.string(), data: z.union([z.object({}).partial().strict().passthrough(), z.null()]).optional() }).strict().passthrough();
 const DomainOutSchema = z.object({ id: z.string().uuid(), name: z.string().min(1), host: z.string(), created_at: z.string().datetime({ offset: true }), updated_at: z.string().datetime({ offset: true }) }).strict().passthrough();
 
@@ -309,6 +309,32 @@ const endpoints = makeApi([
 			},
 		],
 		response: ContentOutSchema,
+		errors: [
+			{
+				status: 422,
+				description: `Validation Error`,
+				schema: HTTPValidationError
+			},
+		]
+	},
+	{
+		method: "get",
+		path: "/content/export",
+		alias: "export_content",
+		requestFormat: "json",
+		parameters: [
+			{
+				name: "app_id",
+				type: "Query",
+				schema: z.string().uuid()
+			},
+			{
+				name: "content_id",
+				type: "Query",
+				schema: z.string().uuid()
+			},
+		],
+		response: z.unknown(),
 		errors: [
 			{
 				status: 422,

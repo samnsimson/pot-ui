@@ -3,6 +3,7 @@ import { DashboardHeader } from "@/components/dashboard-header";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/toaster";
 import { ModalProvider } from "@/context/modal-context";
+import { headers } from "next/headers";
 import { FC, PropsWithChildren } from "react";
 
 export const metadata = {
@@ -10,7 +11,9 @@ export const metadata = {
     description: "Manage your content and media",
 };
 
-const DashboardLayout: FC<PropsWithChildren> = ({ children }) => {
+const DashboardLayout: FC<PropsWithChildren> = async ({ children }) => {
+    const heads = await headers();
+    const pathname = heads.get("x-pathname");
     return (
         <div className="dashboard-theme">
             <ModalProvider>
@@ -18,7 +21,7 @@ const DashboardLayout: FC<PropsWithChildren> = ({ children }) => {
                     <AppSidebar />
                     <main className="w-full">
                         <div className="flex h-screen w-full flex-col">
-                            <DashboardHeader />
+                            <DashboardHeader pathname={pathname} />
                             <div className="flex flex-1 flex-col">{children}</div>
                         </div>
                     </main>

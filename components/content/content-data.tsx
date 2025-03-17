@@ -4,10 +4,12 @@ import { ContentActionButtons } from "@/components/content/action-buttons";
 import { useQueryState } from "nuqs";
 import { useAppContext } from "@/context/apps-context";
 import { Content } from "@/lib/types";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { TrashIcon } from "lucide-react";
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { CopyButton } from "@/components/copy-button";
+import { PageLoader } from "@/components/loader/page-loader";
 
 interface ContentDataProps extends HTMLAttributes<HTMLDivElement> {
     [x: string]: any;
@@ -36,7 +38,7 @@ const getContentData = (content: Array<Content> | undefined, id: string): Conten
 export const ContentData: FC<ContentDataProps> = ({ ...props }) => {
     const [contentId] = useQueryState("content-id");
     const [action] = useQueryState("action");
-    const { appContent } = useAppContext();
+    const { appData, appContent } = useAppContext();
     const [contentData, setContentData] = useState<ContentData | undefined>(undefined);
     const [expandedCell, setExpandedCell] = useState<string | null>(null);
     const isEditing = useMemo(() => action === "edit", [action]);
@@ -56,12 +58,13 @@ export const ContentData: FC<ContentDataProps> = ({ ...props }) => {
         );
     };
 
+    if (!appData) return <PageLoader />;
     if (contentData === undefined) return <p>Select a content</p>;
     if (contentData === null) return <p>No Data</p>;
 
     return (
         <div {...props}>
-            <ContentActionButtons />
+            <ContentActionButtons appId={appData.id} contentId={contentId} />
             <div className="divide-y border-b border-border">
                 <Table className="w-full table-fixed">
                     <TableCaption className="m-0 border-t border-border bg-accent p-3">Your content</TableCaption>
@@ -82,6 +85,7 @@ export const ContentData: FC<ContentDataProps> = ({ ...props }) => {
                                     {isEditing ? <Input type="text" defaultValue={value} /> : truncatedValue(`value-${index}`, value)}
                                 </TableCell>
                                 <TableCell className="w-[10%] text-right">
+                                    <CopyButton value={JSON.stringify({ [key]: value })} />
                                     <Button variant="ghost" className="h-8 w-8 rounded-md p-0">
                                         <TrashIcon width={16} height={16} />
                                     </Button>
