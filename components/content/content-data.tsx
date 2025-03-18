@@ -21,6 +21,7 @@ import { useParams } from "next/navigation";
 import { CopyButton } from "../copy-button";
 
 interface ContentDataProps extends HTMLAttributes<HTMLDivElement> {
+    slug: string;
     [x: string]: any;
 }
 
@@ -52,8 +53,7 @@ const mapObject = (data: ContentData | undefined) => {
     return Object.entries(data).map(([key, value]) => ({ key, value }));
 };
 
-export const ContentData: FC<ContentDataProps> = ({ ...props }) => {
-    const { slug } = useParams();
+export const ContentData: FC<ContentDataProps> = ({ slug, ...props }) => {
     const queryClient = useQueryClient();
     const [contentId] = useQueryState("id");
     const { appData, appContent } = useAppContext();

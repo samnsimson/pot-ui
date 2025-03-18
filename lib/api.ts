@@ -241,7 +241,7 @@ const endpoints = makeApi([
 	},
 	{
 		method: "put",
-		path: "/content/",
+		path: "/content",
 		alias: "update_content",
 		requestFormat: "json",
 		parameters: [

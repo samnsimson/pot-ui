@@ -1,6 +1,7 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import { api } from "./lib/api";
 import { AuthOptions } from "next-auth";
+import { env } from "./env";
 
 export const authOptions: AuthOptions = {
     providers: [
@@ -51,5 +52,5 @@ export const authOptions: AuthOptions = {
         },
     },
     pages: { signIn: "/login" },
-    secret: process.env.NEXTAUTH_SECRET,
+    secret: env.NEXTAUTH_SECRET,
 };

@@ -8,8 +8,7 @@ export async function generateStaticParams() {
     return apps.map((app) => ({ slug: app.slug }));
 }
 
-const MediaPage: NextPage = async ({ params }: any) => {
-    const { slug } = await params;
-    return <div>Media: {slug}</div>;
+const AppsSinglePage: NextPage = ({ children }: any) => {
+    return <div>{children}</div>;
 };
-export default MediaPage;
+export default AppsSinglePage;
