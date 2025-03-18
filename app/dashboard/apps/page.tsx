@@ -6,7 +6,7 @@ const AppsPage = () => {
     return (
         <div className="space-y-6">
             <SectionTitle icon={BoxIcon} sectionTitle="Apps" description="Manage your content apps" />
-            <ListApps />;
+            <ListApps />
         </div>
     );
 };

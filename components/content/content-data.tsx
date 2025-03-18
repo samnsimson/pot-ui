@@ -112,7 +112,7 @@ export const ContentData: FC<ContentDataProps> = ({ slug, ...props }) => {
                 <ContentActionButtons isFormMode={isFormMode} isUpdating={isUpdating} onCancel={setAction} appId={appData.id} contentId={contentId} />
                 <Table className="w-full table-fixed">
                     <TableHeader>
-                        <TableRow>
+                        <TableRow className="bg-secondary hover:bg-secondary">
                             <TableHead className="w-[30%]">Key</TableHead>
                             <TableHead className="w-[60%]">Value</TableHead>
                             <TableHead className="w-[10%] text-right">Actions</TableHead>

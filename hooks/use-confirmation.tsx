@@ -14,18 +14,24 @@ interface ConfirmationProps {
     cancelText: string;
 }
 
-const confirmationComponent = ({ onConfirm, onCancel, cancelText, confirmText }: ConfirmationProps) => (
-    <div className="flex w-full gap-3">
-        <Button className="w-full space-x-2 rounded-md" variant="secondary" onClick={onCancel}>
-            <XIcon />
-            <span>{cancelText}</span>
-        </Button>
-        <Button className="w-full space-x-2 rounded-md" variant="destructive" onClick={onConfirm}>
-            <CheckIcon />
-            <span>{confirmText}</span>
-        </Button>
-    </div>
-);
+const confirmationComponent = ({ onConfirm, onCancel, closeModal, cancelText, confirmText }: ConfirmationProps & { closeModal: () => void }) => {
+    const confirmAction = (callback: () => void = () => {}) => {
+        callback();
+        closeModal();
+    };
+    return (
+        <div className="flex w-full gap-3">
+            <Button className="w-full space-x-2 rounded-md" variant="secondary" onClick={onCancel}>
+                <XIcon />
+                <span>{cancelText}</span>
+            </Button>
+            <Button className="w-full space-x-2 rounded-md" variant="destructive" onClick={() => confirmAction(onConfirm)}>
+                <CheckIcon />
+                <span>{confirmText}</span>
+            </Button>
+        </div>
+    );
+};
 
 export const useConfirmation = ({ title, description, confirmText, cancelText, onConfirm, onCancel }: ConfirmationProps) => {
     const { openModal, closeModal } = useModal({ size: "xl" });
@@ -39,9 +45,9 @@ export const useConfirmation = ({ title, description, confirmText, cancelText, o
         openModal({
             title: title || "Confirm delete",
             description: description || "Are you sure you want to continue?",
-            render: () => confirmationComponent({ onConfirm, onCancel: cancel, confirmText, cancelText }),
+            render: () => confirmationComponent({ onConfirm, onCancel: cancel, closeModal, confirmText, cancelText }),
         });
-    }, [cancelText, confirmText, description, cancel, onConfirm, openModal, title]);
+    }, [cancelText, confirmText, description, cancel, onConfirm, openModal, closeModal, title]);
 
     return { confirm };
 };

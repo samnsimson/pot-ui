@@ -1,3 +1,4 @@
+import { SettingsList } from "@/components/settings/settings-list";
 import { env } from "@/env";
 import { api } from "@/lib/api";
 import { NextPage } from "next";
@@ -10,6 +11,6 @@ export async function generateStaticParams() {
 
 const SettingsPage: NextPage = async ({ params }: any) => {
     const { slug } = await params;
-    return <div>Settings: {slug}</div>;
+    return <SettingsList slug={slug} />;
 };
 export default SettingsPage;

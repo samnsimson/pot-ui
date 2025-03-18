@@ -33,20 +33,20 @@ const config = {
                     foreground: "hsl(var(--secondary-foreground))",
                 },
                 destructive: {
-                    DEFAULT: "hsl(var(--destructive))",
-                    foreground: "hsl(var(--destructive-foreground))",
+                    DEFAULT: "hsla(var(--destructive))",
+                    foreground: "hsla(var(--destructive-foreground))",
                 },
                 success: {
                     DEFAULT: "hsla(var(--success))",
                     foreground: "hsla(var(--success-foreground))",
                 },
                 muted: {
-                    DEFAULT: "hsl(var(--muted))",
-                    foreground: "hsl(var(--muted-foreground))",
+                    DEFAULT: "hsla(var(--muted))",
+                    foreground: "hsla(var(--muted-foreground))",
                 },
                 accent: {
-                    DEFAULT: "hsl(var(--accent))",
-                    foreground: "hsl(var(--accent-foreground))",
+                    DEFAULT: "hsla(var(--accent))",
+                    foreground: "hsla(var(--accent-foreground))",
                 },
                 popover: {
                     DEFAULT: "hsl(var(--popover))",
