@@ -128,11 +128,12 @@ export const ContentData: FC<ContentDataProps> = ({ ...props }) => {
                                     {isFormMode ? <Input {...register(`fields.${index}.value`)} /> : truncatedValue(`key-${field.id}`, field.value)}
                                 </TableCell>
                                 <TableCell className="w-[10%] text-right">
-                                    <CopyButton value={JSON.stringify({ [field.key]: field.value })} />
-                                    {isFormMode && (
+                                    {isFormMode ? (
                                         <Button type="button" variant="ghost" className="h-8 w-8 rounded-md p-0" onClick={() => remove(index)}>
                                             <TrashIcon width={16} height={16} />
                                         </Button>
+                                    ) : (
+                                        <CopyButton value={JSON.stringify({ [field.key]: field.value })} />
                                     )}
                                 </TableCell>
                             </TableRow>
