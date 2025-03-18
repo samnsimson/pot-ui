@@ -13,7 +13,7 @@ export const NoContentData: FC<NoContentDataProps> = ({ action, ...props }) => {
             <FileWarningIcon size={42} className="text-gray-300" />
             <h2 className="font-bold">Nothing to view here!</h2>
             <Button variant="primary" onClick={() => action("create")}>
-                <PlusIcon size={16} /> <span>Create new data</span>
+                <PlusIcon size={16} /> <span>Add data</span>
             </Button>
         </div>
     );

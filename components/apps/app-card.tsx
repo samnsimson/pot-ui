@@ -34,11 +34,11 @@ const GridViewCard: FC<Omit<AppCardProps, "viewMode">> = ({ app, onEdit, onDelet
             </div>
 
             <AspectRatio ratio={1 / 1}>
-                <Link href={`/dashboard/app/${app.slug}/content`} className="flex h-full w-full flex-col items-center justify-center gap-3 p-6">
-                    <div className="bg-primary/10 p-4">
-                        <FolderIcon size={40} className="text-primary group-hover:text-primary" />
+                <Link href={`/dashboard/apps/${app.slug}/content`} className="group flex h-full w-full flex-col items-center justify-center gap-3 p-6">
+                    <div className="rounded-full p-4 transition-all duration-150 group-hover:bg-accent">
+                        <FolderIcon size={40} className="text-gray-400 group-hover:text-gray-400" />
                     </div>
-                    <p className="line-clamp-1 overflow-hidden text-ellipsis text-center font-medium group-hover:text-primary">{app.name}</p>
+                    <p className="line-clamp-1 overflow-hidden text-ellipsis text-center font-medium group-hover:font-semibold">{app.name}</p>
                 </Link>
             </AspectRatio>
         </div>
@@ -47,21 +47,21 @@ const GridViewCard: FC<Omit<AppCardProps, "viewMode">> = ({ app, onEdit, onDelet
 
 const ListViewCard: FC<Omit<AppCardProps, "viewMode">> = ({ app, onEdit, onDelete }) => {
     return (
-        <div className="flex w-full items-center p-4">
-            <div className="mr-4 rounded-full bg-primary/10 p-3">
+        <div className="group flex w-full items-center p-4">
+            <div className="mr-4 rounded-full p-3 transition-all duration-150 group-hover:bg-accent">
                 <FolderIcon size={24} className="text-primary" />
             </div>
 
             <div className="min-w-0 flex-1">
-                <Link href={`/dashboard/app/${app.slug}/content`} className="hover:text-primary">
-                    <h3 className="line-clamp-1 font-medium">{app.name}</h3>
+                <Link href={`/dashboard/apps/${app.slug}/content`} className="hover:text-primary">
+                    <h3 className="line-clamp-1 font-medium group-hover:font-semibold">{app.name}</h3>
                 </Link>
                 <p className="line-clamp-1 text-sm text-muted-foreground">{app.slug}</p>
             </div>
 
             <div className="flex items-center gap-2">
-                <Button variant="ghost" size="sm" asChild className="text-muted-foreground hover:text-foreground">
-                    <Link href={`/dashboard/app/${app.slug}/content`}>
+                <Button variant="ghost" size="icon" asChild className="text-muted-foreground hover:text-foreground">
+                    <Link href={`/dashboard/apps/${app.slug}/content`}>
                         <ExternalLink className="h-4 w-4" />
                         <span className="sr-only">Open app</span>
                     </Link>

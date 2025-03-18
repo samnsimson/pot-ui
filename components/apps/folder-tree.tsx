@@ -29,7 +29,7 @@ const renderForm = ({ appId, slug, parentId = undefined }: { appId: string; slug
 };
 
 const FolderTree: FC<FolderTreeProps> = ({ slug, className }) => {
-    const [contentId] = useQueryState("content-id");
+    const [contentId] = useQueryState("id");
     const { openModal } = useModal();
     const { appData, appContent } = useAppContext();
     const { confirm } = useConfirmation({ confirmText: "Confirm", cancelText: "Ignore", onConfirm: () => alert("deleted") });
@@ -79,7 +79,7 @@ const TreeNode: FC<TreeNodeProps> = ({ slug, content, activeId }) => {
                         <ChevronRightIcon className={cn("transition-all duration-100", isOpen ? "rotate-90" : "rotate-0")} />
                     </CollapsibleTrigger>
                 )}
-                <Link href={`/dashboard/app/${slug}/content?id=${content.id}`} className={cn("flex cursor-pointer items-center", marginClass, activeClass)}>
+                <Link href={`/dashboard/apps/${slug}/content?id=${content.id}`} className={cn("flex cursor-pointer items-center", marginClass, activeClass)}>
                     <div className="flex items-center space-x-2 transition-all hover:pl-2">
                         {isFolder ? isOpen ? <FolderOpenIcon size={16} /> : <FolderIcon size={16} /> : <FileTextIcon size={16} />}
                         <span className={cn("")}>{content.name}</span>

@@ -18,8 +18,8 @@ export const CopyButton: FC<CopyButtonProps> = ({ className, value, ...props }) 
     }, []);
 
     return (
-        <Button variant="ghost" className={cn("h-8 w-8 rounded-md p-0", className)} onClick={() => copyToClipboard(value)}>
-            {copied ? <CheckCheckIcon size={16} /> : <CopyIcon size={16} />}
+        <Button type="button" variant="link" className={cn("h-8 w-8 rounded-md p-0", className)} onClick={() => copyToClipboard(value)}>
+            {copied ? <CheckCheckIcon size={16} className="text-success" /> : <CopyIcon size={16} />}
         </Button>
     );
 };

@@ -1,6 +1,6 @@
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarHeader } from "@/components/ui/sidebar";
 import { Icon } from "@/lib/types";
-import { HomeIcon } from "lucide-react";
+import { BoxIcon, HomeIcon } from "lucide-react";
 import Link from "next/link";
 import { FC } from "react";
 import { LogoutButton } from "../logout-button";
@@ -28,11 +28,13 @@ export const AppSidebar = () => {
                     <h1>Pot CMS</h1>
                 </div>
             </SidebarHeader>
-            <SidebarContent>
+            <SidebarContent className="gap-0">
                 <SidebarGroup className="p-0">
                     <SidebarLink link="/dashboard" text="Home" icon={HomeIcon} />
                 </SidebarGroup>
-                <SidebarGroup />
+                <SidebarGroup className="p-0">
+                    <SidebarLink link="/dashboard/apps" text="Apps" icon={BoxIcon} />
+                </SidebarGroup>
             </SidebarContent>
             <SidebarFooter className="p-0">
                 <LogoutButton className="h-12 w-full border-x border-destructive" />

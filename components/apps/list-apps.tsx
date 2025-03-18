@@ -55,7 +55,6 @@ export const ListApps: FC<ListAppsProps> = ({ ...props }) => {
 
     return (
         <div className="space-y-6" {...props}>
-            <SectionTitle icon={BoxIcon} sectionTitle="Apps" description="Manage your content apps" />
             <div className="flex w-full items-center justify-between gap-3 px-4">
                 <Input placeholder="Search apps..." className="max-w-xl" value={searchQuery || ""} onChange={(e) => setSearchQuery(e.target.value || null)} />
                 <div className="flex items-center space-x-3">

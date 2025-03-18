@@ -9,13 +9,16 @@ import { useFeedback } from "@/hooks/use-feedback";
 interface ContentActionButtonsProps extends HTMLAttributes<HTMLDivElement> {
     appId: string | null;
     contentId: string | null;
+    isFormMode: boolean;
+    isUpdating: boolean;
     [x: string]: any;
 }
 
-export const ContentActionButtons: FC<ContentActionButtonsProps> = ({ appId, contentId, ...props }) => {
+const Spinner = () => <LoaderIcon size={16} className="animate-spin" />;
+
+export const ContentActionButtons: FC<ContentActionButtonsProps> = ({ appId, isFormMode, isUpdating, onCancel, contentId, ...props }) => {
     const [action, setAction] = useQueryState("action");
     const [downloading, setDownloading] = useState(false);
-    const isEditing = useMemo(() => action === "edit", [action]);
     const { feedbackFailure, feedbackSuccess } = useFeedback();
 
     const download = (url: string, filename: string) => {
@@ -46,31 +49,31 @@ export const ContentActionButtons: FC<ContentActionButtonsProps> = ({ appId, con
     };
 
     return (
-        <div className="w-full border-b border-border" {...props}>
+        <div className="w-full" {...props}>
             <div className="inline-flex divide-x border-r border-border">
-                {isEditing ? (
+                {isFormMode ? (
                     <Fragment>
-                        <Button variant="secondary" className="gap-2" onClick={() => setAction(null)}>
+                        <Button type="button" variant="secondary" className="gap-2" onClick={() => onCancel(null)}>
                             <XIcon size={16} className="text-destructive" />
                             <span>Cancel</span>
                         </Button>
-                        <Button variant="ghost" className="gap-2" disabled={!isEditing}>
-                            <SaveIcon size={16} />
+                        <Button type="submit" variant="ghost" className="gap-2" disabled={!isFormMode || isUpdating}>
+                            {isUpdating ? <Spinner /> : <SaveIcon size={16} />}
                             <span>Save</span>
                         </Button>
-                        <Button variant="ghost" className="gap-2" disabled={!isEditing}>
+                        <Button type="button" variant="ghost" className="gap-2" disabled={!isFormMode}>
                             <NewspaperIcon size={16} />
                             <span>Publish</span>
                         </Button>
                     </Fragment>
                 ) : (
                     <Fragment>
-                        <Button variant={isEditing ? "secondary" : "ghost"} className="gap-2" onClick={() => setAction("edit")}>
+                        <Button type="button" variant={isFormMode ? "secondary" : "ghost"} className="gap-2" onClick={() => setAction("edit")}>
                             <PencilIcon size={16} />
                             <span>Edit</span>
                         </Button>
-                        <Button variant="ghost" className="gap-2" disabled={downloading} onClick={() => exportContent({ appId, contentId })}>
-                            {downloading ? <LoaderIcon size={16} className="animate-spin" /> : <DownloadIcon size={16} />}
+                        <Button type="button" variant="ghost" className="gap-2" disabled={downloading} onClick={() => exportContent({ appId, contentId })}>
+                            {downloading ? <Spinner /> : <DownloadIcon size={16} />}
                             <span>Export</span>
                         </Button>
                     </Fragment>
