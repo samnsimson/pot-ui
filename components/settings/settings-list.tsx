@@ -1,14 +1,15 @@
 "use client";
 import { useAppContext } from "@/context/apps-context";
-import { FC, HTMLAttributes } from "react";
+import { FC, HTMLAttributes, useState } from "react";
 import { PageLoader } from "@/components/loader/page-loader";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { format, parseISO } from "date-fns";
 import { Button } from "@/components/ui/button";
-import { BanIcon, TrashIcon } from "lucide-react";
+import { AsteriskIcon, BanIcon, EyeIcon, TrashIcon } from "lucide-react";
 import { useConfirmation } from "@/hooks/use-confirmation";
 import { Switch } from "@/components/ui/switch";
+import { CopyButton } from "../copy-button";
 
 interface SettingsListProps extends HTMLAttributes<HTMLDivElement> {
     slug: string;
@@ -17,6 +18,7 @@ interface SettingsListProps extends HTMLAttributes<HTMLDivElement> {
 
 export const SettingsList: FC<SettingsListProps> = ({ slug, ...props }) => {
     const { appData } = useAppContext();
+    const [isSecretVisible, setIsSecretVisible] = useState(false);
     const { confirm } = useConfirmation({
         title: "Are you sure you want to delete the app?",
         description: "Deleting the app will delete all the contents and assets within this app.",
@@ -30,7 +32,7 @@ export const SettingsList: FC<SettingsListProps> = ({ slug, ...props }) => {
             <Table>
                 <TableBody>
                     <TableRow className="border-b border-border bg-secondary font-semibold">
-                        <TableCell colSpan={2}>App Settings</TableCell>
+                        <TableCell colSpan={2}>App Detail</TableCell>
                     </TableRow>
                     <TableRow className="h-12 border-none">
                         <TableCell>App ID</TableCell>
@@ -42,7 +44,19 @@ export const SettingsList: FC<SettingsListProps> = ({ slug, ...props }) => {
                     </TableRow>
                     <TableRow className="h-12 border-none">
                         <TableCell>App Secret</TableCell>
-                        <TableCell>{appData.secret}</TableCell>
+                        <TableCell>
+                            <div className="flex items-center gap-3">
+                                <span className="flex">
+                                    {isSecretVisible
+                                        ? appData.secret
+                                        : [...Array(appData.secret.length / 2)].map((_, idx) => <AsteriskIcon key={idx} size={12} />)}
+                                </span>
+                                <Button variant="ghost" size="icon" className="size-5 min-h-9 cursor-pointer" asChild>
+                                    <EyeIcon size={16} onClick={() => setIsSecretVisible(!isSecretVisible)} />
+                                </Button>
+                                <CopyButton value={appData.secret} className="min-h-9" />
+                            </div>
+                        </TableCell>
                     </TableRow>
                     <TableRow className="h-12 border-none">
                         <TableCell>App Status</TableCell>

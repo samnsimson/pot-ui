@@ -31,7 +31,8 @@ export const LoginForm: FC<LoginFormProps> = ({}) => {
     const login = async ({ username, password }: LoginType) => {
         try {
             setIsLoading(true);
-            const result = await signIn("credentials", { redirect: false, email: username, password });
+            // const result = await signIn("credentials", { redirect: false, email: username, password });
+            console.log("🚀 ~ login ~ result:", result);
             if (!result || !result.ok) return setError("Wrong credentials");
             setError(null);
             router.push("/");

@@ -13,7 +13,7 @@ export const authOptions: AuthOptions = {
                     if (!credentials) return null;
                     const { email: username, password } = credentials;
                     const { user_id, access_token, refresh_token, ...user } = await api.login({ username, password });
-                    return { id: user_id, accessToken: access_token, refreshToken: refresh_token, ...user };
+                    return { id: user_id, access_token, refresh_token, expires_in: 3600, ...user };
                 } catch (error) {
                     return null;
                 }
