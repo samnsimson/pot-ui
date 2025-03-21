@@ -1,5 +1,11 @@
 import { env } from "@/env";
-import Keycloak from "keycloak-js";
+
+interface KeycloakConfig {
+    clientId: string;
+    clientSecret: string;
+    realm: string;
+    issuer: string;
+}
 
 interface LoginProps {
     username: string;
@@ -18,91 +24,108 @@ interface LoginResponse {
     [x: string]: any;
 }
 
-export class KeycloakAuth {
-    public readonly keycloak: Keycloak;
-    public readonly authenticated: boolean;
-    public readonly accessToken: string | undefined;
-    public readonly refreshToken: string | undefined;
-    public readonly idToken: string | undefined;
-    public readonly isTokenExpired: boolean;
-    public readonly isTokenNearExpiry: boolean;
-    private readonly loginUrl: string;
-    private readonly clientId: string;
-    private readonly clientSecret: string;
+interface UserProfile {
+    id: string;
+    username: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    [x: string]: any;
+}
 
-    constructor() {
-        this.keycloak = new Keycloak({ url: env.KEYCLOAK_CLIENT_URL, realm: env.KEYCLOAK_CLIENT_REALM, clientId: env.KEYCLOAK_CLIENT_ID });
-        this.authenticated = !!this.keycloak.authenticated;
-        this.accessToken = this.getToken();
-        this.refreshToken = this.keycloak.refreshToken;
-        this.idToken = this.keycloak.idToken;
-        this.isTokenExpired = this.keycloak.isTokenExpired();
-        this.isTokenNearExpiry = this.keycloak.isTokenExpired(5);
-        this.loginUrl = `${env.KEYCLOAK_ISSUER}/protocol/openid-connect/token`;
-        this.clientId = env.KEYCLOAK_CLIENT_ID;
-        this.clientSecret = env.KEYCLOAK_CLIENT_SECRET;
-    }
+interface TokenPayload {
+    sub: string;
+    exp: number;
+    realm_access?: { roles: string[] };
+    resource_access?: { [clientId: string]: { roles: string[] } };
+    [x: string]: any;
+}
 
-    private getToken() {
-        return this.keycloak.token;
-    }
+export class Keycloak {
+    private config: KeycloakConfig;
+    private tokenEndpoint: string;
+    private userInfoEndpoint: string;
 
-    public async getUser() {
-        try {
-            const user = await this.keycloak.loadUserProfile();
-            console.log("🚀 ~ Auth ~ getUser ~ user:", user);
-            return user;
-        } catch (error) {
-            return null;
-        }
+    constructor(config: KeycloakConfig) {
+        this.config = config;
+        this.tokenEndpoint = `${this.config.issuer}/protocol/openid-connect/token`;
+        this.userInfoEndpoint = `${this.config.issuer}/protocol/openid-connect/userinfo`;
     }
 
     public async login({ username, password }: LoginProps): Promise<LoginResponse> {
         try {
-            const method = "POST";
-            const headers = { "Content-Type": "application/x-www-form-urlencoded" };
-            const params = new URLSearchParams();
-            params.append("username", username);
-            params.append("password", password);
-            params.append("grant_type", "password");
-            params.append("client_id", this.clientId);
-            params.append("client_secret", this.clientSecret);
-            const response = await fetch(this.loginUrl, { method, headers, body: params });
-            if (!response.ok) throw new Error("Login failed");
+            const headers = new Headers();
+            headers.append("Content-Type", "application/x-www-form-urlencoded");
+            const body = new URLSearchParams();
+            body.append("username", username);
+            body.append("password", password);
+            body.append("grant_type", "password");
+            body.append("client_id", this.config.clientId);
+            body.append("client_secret", this.config.clientSecret);
+            const response = await fetch(this.tokenEndpoint, { method: "POST", headers, body });
+            if (!response.ok) throw new Error(`Login failed: ${response.statusText}`);
             return await response.json();
         } catch (error: any) {
-            console.log("🚀 ~ Auth ~ login ~ error:", error);
+            console.error("KeycloakSDK ~ login ~ error:", error);
             throw new Error(error.message);
         }
     }
 
-    public logout({ redirectUrl }: { redirectUrl?: string } = {}) {
-        this.keycloak.logout({ redirectUri: redirectUrl });
-    }
-
-    public async refreshAccessToken() {
+    public async refreshAccessToken(refreshToken: string): Promise<LoginResponse> {
         try {
-            const refreshed = await this.keycloak.updateToken(5);
-            if (!refreshed) throw new Error("Unable to refresh token");
-            return this.getToken();
-        } catch (error) {
-            console.log("🚀 ~ Auth ~ refreshAccessToken ~ error:", error);
-            return undefined;
+            const headers = new Headers();
+            const body = new URLSearchParams();
+            headers.append("Content-Type", "application/x-www-form-urlencoded");
+            body.append("grant_type", "refresh_token");
+            body.append("client_id", this.config.clientId);
+            body.append("client_secret", this.config.clientSecret);
+            body.append("refresh_token", refreshToken);
+            const response = await fetch(this.tokenEndpoint, { method: "POST", headers, body });
+            if (!response.ok) throw new Error(`Token refresh failed: ${response.statusText}`);
+            return await response.json();
+        } catch (error: any) {
+            console.error("KeycloakSDK ~ refreshAccessToken ~ error:", error);
+            throw new Error(error.message);
         }
     }
 
-    public getUserRoles() {
-        if (this.keycloak.realmAccess && "roles" in this.keycloak.realmAccess) return this.keycloak.realmAccess.roles;
-        return [];
+    public async getUserProfile(accessToken: string): Promise<UserProfile> {
+        try {
+            const headers = new Headers();
+            headers.append("Authorization", `Bearer ${accessToken}`);
+            const response = await fetch(this.userInfoEndpoint, { method: "GET", headers });
+            if (!response.ok) throw new Error(`Failed to fetch user profile: ${response.statusText}`);
+            return await response.json();
+        } catch (error: any) {
+            console.error("KeycloakSDK ~ getUserProfile ~ error:", error);
+            throw new Error(error.message);
+        }
     }
 
-    public hasRole(...roles: Array<string>) {
-        return roles.every((role) => this.keycloak.hasRealmRole(role));
-    }
-
-    public hasPermission({ role, resource = undefined }: { role: string; resource?: string }) {
-        return this.keycloak.hasResourceRole(role, resource);
+    // Logout (Keycloak does not support direct logout via API without redirect)
+    public async logout(accessToken: string, refreshToken: string, redirectUri?: string): Promise<void> {
+        try {
+            const headers = new Headers();
+            headers.append("Content-Type", "application/x-www-form-urlencoded");
+            const body = new URLSearchParams();
+            body.append("client_id", this.config.clientId);
+            body.append("client_secret", this.config.clientSecret);
+            body.append("refresh_token", refreshToken);
+            await fetch(`${this.config.issuer}/protocol/openid-connect/revoke`, { method: "POST", headers, body });
+            if (redirectUri) {
+                const logoutUrl = `${this.config.issuer}/protocol/openid-connect/logout?redirect_uri=${encodeURIComponent(redirectUri)}`;
+                window.location.href = logoutUrl;
+            }
+        } catch (error: any) {
+            console.error("KeycloakSDK ~ logout ~ error:", error);
+            throw new Error(error.message);
+        }
     }
 }
 
-export const keycloakAuth = new KeycloakAuth();
+export const auth = new Keycloak({
+    clientId: env.KEYCLOAK_CLIENT_ID,
+    clientSecret: env.KEYCLOAK_CLIENT_SECRET,
+    realm: env.KEYCLOAK_CLIENT_REALM,
+    issuer: env.KEYCLOAK_ISSUER,
+});

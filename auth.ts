@@ -1,19 +1,23 @@
 import CredentialsProvider from "next-auth/providers/credentials";
-import { api } from "./lib/api";
 import { AuthOptions } from "next-auth";
 import { env } from "./env";
+import { api } from "./lib/api";
 
 export const authOptions: AuthOptions = {
+    session: {
+        strategy: "jwt",
+    },
     providers: [
         CredentialsProvider({
             name: "Credentials",
             credentials: { email: { label: "Email", type: "text" }, password: { label: "Password", type: "password" } },
-            async authorize(credentials) {
+            authorize: async (credentials) => {
                 try {
                     if (!credentials) return null;
                     const { email: username, password } = credentials;
-                    const { user_id, access_token, refresh_token, ...user } = await api.login({ username, password });
-                    return { id: user_id, access_token, refresh_token, expires_in: 3600, ...user };
+                    const { status, user_id, token_max_age, ...rest } = await api.login({ username, password });
+                    if (status !== "Success") return null;
+                    return { id: user_id, expires_in: token_max_age, ...rest };
                 } catch (error) {
                     return null;
                 }
@@ -21,33 +25,35 @@ export const authOptions: AuthOptions = {
         }),
     ],
     callbacks: {
-        async jwt({ token, user }: any) {
+        async jwt({ token, user, account }) {
+            const currentTime = Math.floor(Date.now() / 1000);
             if (user) {
-                const { id, host, role, accessToken, refreshToken, token_max_age } = user;
-                const tokenMaxAge = Date.now() + token_max_age * 1000;
-                return { ...token, id, host, role, accessToken, refreshToken, tokenMaxAge };
-            } else if (Date.now() < token.tokenMaxAge) {
+                token.sub = String(user.id);
+                token.accessToken = String(user.access_token);
+                token.refreshToken = String(user.refresh_token);
+                token.expiresAt = currentTime + user.expires_in;
+                return token;
+            } else if (account) {
+                token.sub = String(account.userId);
+                token.accessToken = String(account.access_token);
+                token.refreshToken = String(account.refresh_token);
+                token.expiresAt = Number(account.expires_at);
+                return token;
+            } else if (currentTime < token.expiresAt) {
                 return token;
             } else {
                 try {
-                    console.log("****TOKEN EXPIRED, REFRESHING****");
-                    const refreshedToken = await api.refresh_token({ token: token.refreshToken });
-                    const { user_id, host, role, access_token: accessToken, refresh_token: refreshToken, ...refreshedTokenRest } = refreshedToken;
-                    const tokenMaxAge = Date.now() + refreshedTokenRest.token_max_age * 1000;
-                    return { ...token, host, role, id: user_id, accessToken, refreshToken, tokenMaxAge };
+                    const { user_id, token_max_age, ...rest } = await api.refresh_token({ token: token.refreshToken });
+                    return { ...token, id: user_id, expires_in: token_max_age, ...rest };
                 } catch (error) {
-                    console.log("🚀 ~ jwt ~ error:", error);
                     return token;
                 }
             }
         },
-        async session({ session, token }: any) {
-            if (!token) return session;
-            session.user.id = token.sub;
-            session.user.host = token.host;
-            session.user.name = token.name;
-            session.role = token.role;
+        async session({ session, token }) {
             session.accessToken = token.accessToken;
+            session.refreshToken = token.refreshToken;
+            session.expiresAt = token.expiresAt;
             return session;
         },
     },
