@@ -17,17 +17,26 @@ import { queryKeys } from "@/constants/query-keys";
 import { mutationKeys } from "@/constants/mutation-keys";
 import { client } from "@/actions/client";
 import { useFeedback } from "@/hooks/use-feedback";
-import { useParams } from "next/navigation";
 import { CopyButton } from "../copy-button";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 interface ContentDataProps extends HTMLAttributes<HTMLDivElement> {
     slug: string;
     [x: string]: any;
 }
 
+const ContentFormDataSchema = z.object({
+    fields: z.array(
+        z.object({
+            key: z.string({ required_error: "Key is required" }).min(1, "key cannot be empty"),
+            value: z.any({ required_error: "Value is required" }),
+        }),
+    ),
+});
+
 type ContentData = Record<string, any> | null;
-type ContentFormField = { key: string; value: string };
-type ContentFormData = { fields: Array<ContentFormField> };
+type ContentFormData = z.infer<typeof ContentFormDataSchema>;
 type MutaionProps = { appId: string; contentId: string; data: ContentUpdate };
 
 const contentCache = new Map<string, ContentData>();
@@ -60,11 +69,12 @@ export const ContentData: FC<ContentDataProps> = ({ slug, ...props }) => {
     const [action, setAction] = useQueryState("action");
     const [contentData, setContentData] = useState<ContentData | undefined>(undefined);
     const [expandedCell, setExpandedCell] = useState<string | null>(null);
-    const { control, handleSubmit, register, setValue } = useForm<ContentFormData>({ defaultValues: { fields: [] } });
-    const { fields, append, remove } = useFieldArray({ control, name: "fields" });
     const isCreating = useMemo(() => action === "create", [action]);
     const isEditing = useMemo(() => action === "edit", [action]);
     const isFormMode = useMemo(() => isCreating || isEditing, [isCreating, isEditing]);
+    const form = useForm<ContentFormData>({ resolver: zodResolver(ContentFormDataSchema), defaultValues: { fields: [] } });
+    const { control, handleSubmit, register, setValue } = form;
+    const { fields, append, remove } = useFieldArray({ control, name: "fields" });
     const { feedbackSuccess, feedbackFailure } = useFeedback();
 
     useEffect(() => setContentData(contentId ? getContentData(appContent, contentId) : undefined), [contentId, appContent]);
@@ -73,7 +83,7 @@ export const ContentData: FC<ContentDataProps> = ({ slug, ...props }) => {
     const { mutate: updateContent, isPending: isUpdating } = useMutation({
         mutationKey: [mutationKeys.UPDATE_CONTENT],
         mutationFn: ({ appId, contentId, data }: MutaionProps) => client.updateContent(appId, contentId, data),
-        onError: () => feedbackFailure({ title: "Oops", description: `Error while ${isCreating ? "created" : "updated"} content` }),
+        onError: () => feedbackFailure({ title: "Oops", description: `Error while ${isCreating ? "creating" : "updating"} content` }),
         onSuccess: async () => {
             contentCache.clear();
             await queryClient.invalidateQueries({ queryKey: [queryKeys.GET_APP_CONTENT, slug] });

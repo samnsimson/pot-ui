@@ -35,7 +35,7 @@ const SidebarLink: FC<SidebarLinkProp> = ({ text, link, icon: Icon, segment: lin
     const segment = useSelectedLayoutSegment();
     const active = useMemo(() => (linkSegment === null ? pathname === "/dashboard" : segment === linkSegment), [pathname, segment, linkSegment]);
     return (
-        <Button asChild variant={active ? "success" : "primary"} className="justify-start ring-0 hover:bg-success">
+        <Button asChild variant={active ? "success" : "primary"} className="justify-start border-b border-b-foreground ring-0 hover:bg-success">
             <Link href={link} className="flex h-full min-h-12 w-full items-center gap-3 p-3 font-semibold">
                 {Icon && <Icon size={18} />}
                 <span>{text}</span>

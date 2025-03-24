@@ -25,26 +25,24 @@ export const authOptions: AuthOptions = {
         }),
     ],
     callbacks: {
-        async jwt({ token, user, account }) {
+        async jwt({ token, user }) {
             const currentTime = Math.floor(Date.now() / 1000);
             if (user) {
-                token.sub = String(user.id);
-                token.accessToken = String(user.access_token);
-                token.refreshToken = String(user.refresh_token);
+                token.sub = user.id;
+                token.accessToken = user.access_token;
+                token.refreshToken = user.refresh_token;
                 token.expiresAt = currentTime + user.expires_in;
-                return token;
-            } else if (account) {
-                token.sub = String(account.userId);
-                token.accessToken = String(account.access_token);
-                token.refreshToken = String(account.refresh_token);
-                token.expiresAt = Number(account.expires_at);
                 return token;
             } else if (currentTime < token.expiresAt) {
                 return token;
             } else {
                 try {
-                    const { user_id, token_max_age, ...rest } = await api.refresh_token({ token: token.refreshToken });
-                    return { ...token, id: user_id, expires_in: token_max_age, ...rest };
+                    const resp = await api.refresh_token({ token: token.refreshToken });
+                    token.sub = resp.user_id;
+                    token.accessToken = resp.access_token;
+                    token.refreshToken = resp.refresh_token;
+                    token.expiresAt = currentTime + resp.token_max_age;
+                    return token;
                 } catch (error) {
                     return token;
                 }

@@ -10,6 +10,8 @@ import { LogInIcon } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Alert } from "@/components/ui/alert";
+import { Separator } from "../ui/separator";
+import Link from "next/link";
 
 interface LoginFormProps extends HTMLAttributes<HTMLDivElement> {
     [x: string]: any;
@@ -34,7 +36,7 @@ export const LoginForm: FC<LoginFormProps> = ({}) => {
             const result = await signIn("credentials", { redirect: false, email: username, password });
             if (!result || !result.ok) return setError("Wrong credentials");
             setError(null);
-            router.push("/");
+            router.push("/dashboard");
         } finally {
             setIsLoading(false);
         }
@@ -69,11 +71,22 @@ export const LoginForm: FC<LoginFormProps> = ({}) => {
                         </FormItem>
                     )}
                 />
-                <Button size="lg" className="w-full font-poppins font-bold" isLoading={isLoading}>
+                {error && <Alert variant="destructive">{error}</Alert>}
+                <Button variant="primary" size="lg" className="w-full font-poppins font-bold" isLoading={isLoading}>
                     <LogInIcon />
                     <span>Login</span>
                 </Button>
-                {error && <Alert variant="destructive">{error}</Alert>}
+                <div className="flex gap-3">
+                    <Button className="w-full" variant="outline">
+                        Google Login
+                    </Button>
+                    <Button className="w-full" variant="outline">
+                        Facebook Login
+                    </Button>
+                </div>
+                <Button type="button" variant="link" className="w-full">
+                    Do not have an account? <Link href="/signup">Sign up</Link>
+                </Button>
             </form>
         </Form>
     );

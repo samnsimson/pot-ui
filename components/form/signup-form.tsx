@@ -1,5 +1,5 @@
 "use client";
-import { FC, HTMLAttributes } from "react";
+import { FC, HTMLAttributes, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -9,7 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LogInIcon } from "lucide-react";
 import { signup } from "@/actions/auth-actions";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
+import Link from "next/link";
+import { signIn } from "next-auth/react";
 
 interface SignupFormProps extends HTMLAttributes<HTMLDivElement> {
     [x: string]: any;
@@ -18,15 +20,24 @@ interface SignupFormProps extends HTMLAttributes<HTMLDivElement> {
 type SignupSchema = z.infer<typeof schemas.UserCreateSchema>;
 
 export const SignupForm: FC<SignupFormProps> = ({}) => {
+    const [isLoading, setIsLoading] = useState(false);
+    const router = useRouter();
     const form = useForm<SignupSchema>({
         resolver: zodResolver(schemas.UserCreateSchema),
         defaultValues: { username: "", password: "" },
     });
 
     const handleSignup = async (signupData: SignupSchema) => {
-        const user = await signup(signupData);
-        console.log("🚀 ~ handleSignup ~ user:", user);
-        redirect("/");
+        try {
+            setIsLoading(true);
+            const user = await signup(signupData);
+            const result = await signIn("credentials", { redirect: false, email: signupData.email, password: signupData.password });
+            if (result && result.ok) router.push("/dashboard");
+        } catch (error) {
+            console.log("🚀 ~ handleSignup ~ error:", error);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -110,9 +121,13 @@ export const SignupForm: FC<SignupFormProps> = ({}) => {
                         </FormItem>
                     )}
                 />
-                <Button size="lg" className="w-full font-poppins font-bold">
+                <Button size="lg" className="w-full font-poppins font-bold" isLoading={isLoading} disabled={isLoading}>
                     <LogInIcon />
                     <span>Signup</span>
+                </Button>
+
+                <Button type="button" variant="link" className="w-full">
+                    Already have an account? <Link href="/login">Login</Link>
                 </Button>
             </form>
         </Form>

@@ -45,7 +45,7 @@ export const AppsNavigation: FC<AppsNavigationProps> = ({ ...props }) => {
                 const fullPath = `/dashboard/apps/${slug}/${link}`;
                 const isActive = pathname.includes(fullPath);
                 return (
-                    <Button key={idx} className="rounded-none font-semibold" variant={isActive ? "success" : "muted"} asChild>
+                    <Button key={idx} className="rounded-none font-semibold" variant={isActive ? "tab" : "muted"} asChild>
                         <Link href={`/dashboard/apps/${slug}/${link}`} className="inline-flex items-center gap-3">
                             <Icon size={18} /> <span>{name}</span>
                         </Link>
