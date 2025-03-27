@@ -3,4 +3,5 @@ export const queryKeys = {
     GET_APP_DETAIL: "GET_APP_DETAIL",
     GET_APP_CONTENT: "GET_APP_CONTENT",
     GET_APP_USERS: "GET_APP_USERS",
+    LIST_APP_MEDIA: "LIST_APP_MEDIA",
 };

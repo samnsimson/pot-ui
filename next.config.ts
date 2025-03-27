@@ -1,6 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+    images: {
+        remotePatterns: [
+            {
+                protocol: "https",
+                hostname: "d3av08opq7lq5r.cloudfront.net",
+                pathname: "**",
+            },
+        ],
+    },
     async rewrites() {
         return [{ source: "/data/:path*", destination: "http://localhost:8000/api/v1/:path*" }];
     },

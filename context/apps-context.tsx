@@ -3,7 +3,7 @@ import { client } from "@/actions/client";
 import { PageLoader } from "@/components/loader/page-loader";
 import { queryKeys } from "@/constants/query-keys";
 import { useFeedback } from "@/hooks/use-feedback";
-import { App, AppUsers, Content } from "@/lib/types";
+import { App, AppUsers, Content, Media } from "@/lib/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
 import { createContext, FC, PropsWithChildren, useContext, useMemo } from "react";
@@ -12,6 +12,7 @@ interface AppsContextInterface {
     appData: App | undefined;
     appContent: Array<Content>;
     appUsers: Array<AppUsers>;
+    appMedia: Array<Media>;
     error: Error | null;
     deleteApp: (id: string) => void;
     isDeleting: boolean;
@@ -25,6 +26,7 @@ const AppsContext = createContext<AppsContextInterface>({
     appData: undefined,
     appContent: [],
     appUsers: [],
+    appMedia: [],
     error: null,
     deleteApp: () => {},
     isDeleting: false,
@@ -35,11 +37,12 @@ export const AppsContextProvider: FC<ProviderProps> = ({ children }) => {
     const { slug } = useParams();
     const queryClient = useQueryClient();
     const { feedbackSuccess, feedbackFailure } = useFeedback();
-    const { GET_APPS, GET_APP_DETAIL, GET_APP_CONTENT, GET_APP_USERS } = queryKeys;
+    const { GET_APPS, GET_APP_DETAIL, GET_APP_CONTENT, GET_APP_USERS, LIST_APP_MEDIA } = queryKeys;
 
     const { data: appData, error } = useQuery({ queryKey: [GET_APP_DETAIL, slug], queryFn: () => client.getApp(String(slug)), enabled: !!slug });
     const { data: appContent = [] } = useQuery({ queryKey: [GET_APP_CONTENT, slug], queryFn: () => client.getContent(appData!.id), enabled: !!appData });
     const { data: appUsers = [] } = useQuery({ queryKey: [GET_APP_USERS, slug], queryFn: () => client.getAppUsers(appData!.id), enabled: !!appData });
+    const { data: appMedia = [] } = useQuery({ queryKey: [LIST_APP_MEDIA, slug], queryFn: () => client.listMedia({ appId: appData!.id }), enabled: !!appData });
 
     const { mutate: deleteApp, isPending: isDeleting } = useMutation({
         mutationFn: (id: string) => client.deleteApp(id),
@@ -52,8 +55,8 @@ export const AppsContextProvider: FC<ProviderProps> = ({ children }) => {
     });
 
     const context = useMemo(
-        () => ({ slug, error, deleteApp, appData, appContent, appUsers, isDeleting }),
-        [slug, error, deleteApp, appData, appContent, appUsers, isDeleting],
+        () => ({ slug, error, deleteApp, appData, appContent, appUsers, appMedia, isDeleting }),
+        [slug, error, deleteApp, appData, appContent, appUsers, appMedia, isDeleting],
     );
 
     if (error) throw error;

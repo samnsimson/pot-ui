@@ -63,6 +63,11 @@ const ContentCreateSchema = z.object({ name: z.string(), data: z.union([z.object
 const ContentOutSchema: z.ZodType<ContentOutSchema> = z.lazy(() => z.object({ id: z.string().uuid(), app_id: z.string().uuid(), name: z.string(), slug: z.string(), data: z.union([z.object({}).partial().strict().passthrough(), z.null()]).optional(), parent_id: z.union([z.string(), z.null()]).optional(), created_at: z.string().datetime({ offset: true }), updated_at: z.string().datetime({ offset: true }), children: z.array(ContentOutSchema).optional().default([]) }).strict().passthrough());
 const ContentUpdateSchema = z.object({ name: z.union([z.string(), z.null()]), data: z.union([z.object({}).partial().strict().passthrough(), z.null()]) }).partial().strict().passthrough();
 const DomainOutSchema = z.object({ id: z.string().uuid(), name: z.string().min(1), host: z.string(), created_at: z.string().datetime({ offset: true }), updated_at: z.string().datetime({ offset: true }) }).strict().passthrough();
+const MediaResponse = z.object({ id: z.string().uuid(), name: z.string(), media_type: z.string(), url: z.union([z.string(), z.null()]), alt_text: z.union([z.string(), z.null()]), caption: z.union([z.string(), z.null()]), is_public: z.boolean() }).strict().passthrough();
+const MediaUpdateSchema = z.object({ name: z.union([z.string(), z.null()]), alt_text: z.union([z.string(), z.null()]), caption: z.union([z.string(), z.null()]), is_public: z.union([z.boolean(), z.null()]), meta: z.union([z.object({}).partial().strict().passthrough(), z.null()]) }).partial().strict().passthrough();
+const MediaTypeEnum = z.enum(["image", "video", "audio", "other"]);
+const media_type = z.union([MediaTypeEnum, z.null()]).optional();
+const Body_upload_media = z.object({ file: z.instanceof(File) }).strict().passthrough();
 
 export const schemas = {
 	Body_login,
@@ -82,6 +87,11 @@ export const schemas = {
 	ContentOutSchema,
 	ContentUpdateSchema,
 	DomainOutSchema,
+	MediaResponse,
+	MediaUpdateSchema,
+	MediaTypeEnum,
+	media_type,
+	Body_upload_media,
 };
 
 const endpoints = makeApi([
@@ -356,6 +366,151 @@ const endpoints = makeApi([
 			},
 		],
 		response: DomainOutSchema,
+		errors: [
+			{
+				status: 422,
+				description: `Validation Error`,
+				schema: HTTPValidationError
+			},
+		]
+	},
+	{
+		method: "get",
+		path: "/media/:app_id",
+		alias: "list_app_media",
+		requestFormat: "json",
+		parameters: [
+			{
+				name: "app_id",
+				type: "Path",
+				schema: z.string().uuid()
+			},
+			{
+				name: "media_type",
+				type: "Query",
+				schema: media_type
+			},
+			{
+				name: "limit",
+				type: "Query",
+				schema: z.number().int().optional().default(100)
+			},
+			{
+				name: "offset",
+				type: "Query",
+				schema: z.number().int().optional().default(0)
+			},
+		],
+		response: z.array(MediaResponse),
+		errors: [
+			{
+				status: 422,
+				description: `Validation Error`,
+				schema: HTTPValidationError
+			},
+		]
+	},
+	{
+		method: "get",
+		path: "/media/:app_id/:media_id",
+		alias: "get_media",
+		requestFormat: "json",
+		parameters: [
+			{
+				name: "app_id",
+				type: "Path",
+				schema: z.string().uuid()
+			},
+			{
+				name: "media_id",
+				type: "Path",
+				schema: z.string().uuid()
+			},
+		],
+		response: MediaResponse,
+		errors: [
+			{
+				status: 422,
+				description: `Validation Error`,
+				schema: HTTPValidationError
+			},
+		]
+	},
+	{
+		method: "put",
+		path: "/media/:app_id/:media_id",
+		alias: "update_media",
+		requestFormat: "json",
+		parameters: [
+			{
+				name: "body",
+				type: "Body",
+				schema: MediaUpdateSchema
+			},
+			{
+				name: "app_id",
+				type: "Path",
+				schema: z.string().uuid()
+			},
+			{
+				name: "media_id",
+				type: "Path",
+				schema: z.string().uuid()
+			},
+		],
+		response: MediaResponse,
+		errors: [
+			{
+				status: 422,
+				description: `Validation Error`,
+				schema: HTTPValidationError
+			},
+		]
+	},
+	{
+		method: "delete",
+		path: "/media/:app_id/:media_id",
+		alias: "delete_media",
+		requestFormat: "json",
+		parameters: [
+			{
+				name: "app_id",
+				type: "Path",
+				schema: z.string().uuid()
+			},
+			{
+				name: "media_id",
+				type: "Path",
+				schema: z.string().uuid()
+			},
+		],
+		response: z.unknown(),
+		errors: [
+			{
+				status: 422,
+				description: `Validation Error`,
+				schema: HTTPValidationError
+			},
+		]
+	},
+	{
+		method: "post",
+		path: "/media/upload",
+		alias: "upload_media",
+		requestFormat: "form-data",
+		parameters: [
+			{
+				name: "body",
+				type: "Body",
+				schema: z.object({ file: z.instanceof(File) }).strict().passthrough()
+			},
+			{
+				name: "app_id",
+				type: "Query",
+				schema: z.string().uuid()
+			},
+		],
+		response: MediaResponse,
 		errors: [
 			{
 				status: 422,

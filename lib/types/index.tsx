@@ -12,3 +12,5 @@ export type ContentUpdate = z.infer<typeof schemas.ContentUpdateSchema>;
 export type Content = z.infer<typeof schemas.ContentOutSchema>;
 export type AppUsers = z.infer<typeof schemas.UserOutSchema>;
 export type ApiError = AxiosError<{ detail: any }>;
+export type MediaType = z.infer<typeof schemas.MediaTypeEnum>;
+export type Media = z.infer<typeof schemas.MediaResponse>;

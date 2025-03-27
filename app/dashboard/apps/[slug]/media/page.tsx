@@ -1,3 +1,4 @@
+import { AppMediaList } from "@/components/apps/app-media";
 import { env } from "@/env";
 import { api } from "@/lib/api";
 import { NextPage } from "next";
@@ -10,6 +11,10 @@ export async function generateStaticParams() {
 
 const MediaPage: NextPage = async ({ params }: any) => {
     const { slug } = await params;
-    return <div>Media: {slug}</div>;
+    return (
+        <div className="p-3">
+            <AppMediaList />
+        </div>
+    );
 };
 export default MediaPage;
