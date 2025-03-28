@@ -13,7 +13,7 @@ export async function generateStaticParams() {
 const MediaPage: NextPage = async ({ params }: any) => {
     const { slug } = await params;
     return (
-        <div className="p-3">
+        <div className="h-full p-3">
             <AppMediaList />
         </div>
     );

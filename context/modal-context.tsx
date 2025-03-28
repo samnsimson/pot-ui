@@ -3,7 +3,7 @@ import { AppModal } from "@/components/app-modal";
 import { createContext, FC, Fragment, PropsWithChildren, ReactElement, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 type ModalProps = {
-    size: "sm" | "md" | "lg" | "xl";
+    size: "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "full";
 };
 
 type ModalOpenProps = {
