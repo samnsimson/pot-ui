@@ -1,7 +1,7 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import { AuthOptions } from "next-auth";
 import { env } from "./env";
-import { AuthApi, Configuration } from "./api/client";
+import { ServerApi } from "./lib/api/server";
 
 export const authOptions: AuthOptions = {
     session: {
@@ -14,9 +14,9 @@ export const authOptions: AuthOptions = {
             authorize: async (credentials) => {
                 try {
                     if (!credentials) return null;
-                    const authApi = new AuthApi(new Configuration({ basePath: env.SERVER_BASE_PATH }));
+                    const api = new ServerApi();
                     const { email: username, password } = credentials;
-                    const { data } = await authApi.login(username, password);
+                    const { data } = await api.auth.login(username, password);
                     const { status, user_id, token_max_age, ...rest } = data;
                     if (status !== "Success") return null;
                     return { id: user_id, expires_in: token_max_age, ...rest };
@@ -40,8 +40,8 @@ export const authOptions: AuthOptions = {
                 return token;
             } else {
                 try {
-                    const authApi = new AuthApi(new Configuration({ basePath: env.SERVER_BASE_PATH }));
-                    const { data: resp } = await authApi.refreshToken({ token: token.refreshToken });
+                    const api = new ServerApi();
+                    const { data: resp } = await api.auth.refreshToken({ token: token.refreshToken });
                     token.sub = resp.user_id;
                     token.accessToken = resp.access_token;
                     token.refreshToken = resp.refresh_token;
