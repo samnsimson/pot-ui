@@ -9,6 +9,7 @@ export const env = createEnv({
         NEXTAUTH_SECRET: z.string().min(1),
         NEXTAUTH_URL: z.string().url(),
         ARCJET_KEY: z.string().min(1),
+        SERVER_BASE_PATH: z.string().min(1),
     },
     client: {},
     runtimeEnv: {
@@ -18,5 +19,6 @@ export const env = createEnv({
         NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
         NEXTAUTH_URL: process.env.NEXTAUTH_URL,
         ARCJET_KEY: process.env.ARCJET_KEY,
+        SERVER_BASE_PATH: process.env.SERVER_BASE_PATH,
     },
 });

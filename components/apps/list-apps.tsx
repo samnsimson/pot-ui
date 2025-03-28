@@ -1,12 +1,11 @@
 "use client";
-import { BoxIcon, PlusCircleIcon } from "lucide-react";
-import { FC, HTMLAttributes, useMemo, useState } from "react";
+import { PlusCircleIcon } from "lucide-react";
+import { FC, HTMLAttributes, useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CreateAppComponent } from "@/components/create-app";
 import { useDrawer } from "@/context/drawer-context";
 import { useQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/constants/query-keys";
-import { client } from "@/actions/client";
 import { PageLoader } from "../loader/page-loader";
 import { Card } from "@/components/ui/card";
 import { useQueryState } from "nuqs";
@@ -15,8 +14,8 @@ import { Input } from "@/components/ui/input";
 import { AppCard } from "./app-card";
 import { EmptyApps } from "./empty-apps";
 import { ViewToggle } from "./view-toggle";
-import { App } from "@/lib/types";
-import { SectionTitle } from "../section-title";
+import { api } from "@/lib/api/client";
+import { AppOutSchema } from "@/api/client";
 
 interface ListAppsProps extends HTMLAttributes<HTMLDivElement> {
     [x: string]: any;
@@ -28,29 +27,32 @@ export const ListApps: FC<ListAppsProps> = ({ ...props }) => {
     const [viewMode, setViewMode] = useState<"grid" | "list">(() => (localStorage.getItem("viewMode") as any) ?? "grid");
     const [searchQuery, setSearchQuery] = useQueryState("q");
     const { openDrawer } = useDrawer({ title, description, render: ({ isOpen }) => <CreateAppComponent isOpen={isOpen} /> });
-    const { data, isLoading, isError } = useQuery({ queryKey: [queryKeys.GET_APPS], queryFn: client.getApps });
+    const { data, error, isError } = useQuery({ queryKey: [queryKeys.GET_APPS], queryFn: () => api.apps.listApps(), select: ({ data }) => data });
+    const [appsList, setAppsList] = useState<Array<AppOutSchema>>([]);
 
-    const appsList = useMemo(() => {
-        if (data && !searchQuery) return data;
+    useEffect(() => {
+        if (data && !searchQuery) return setAppsList(data);
         if (data && searchQuery) {
-            return data.filter((app) => {
-                const includesAppName = app.name.toLowerCase().includes(searchQuery.toLowerCase());
-                const includesAppSlug = app.slug.toLowerCase().includes(searchQuery.toLowerCase());
-                return includesAppName || includesAppSlug;
-            });
+            setAppsList(
+                data.filter((app) => {
+                    const includesAppName = app.name.toLowerCase().includes(searchQuery.toLowerCase());
+                    const includesAppSlug = app.slug.toLowerCase().includes(searchQuery.toLowerCase());
+                    return includesAppName || includesAppSlug;
+                }),
+            );
         }
     }, [data, searchQuery]);
 
-    const handleEditApp = (app: App) => {
+    const handleEditApp = (app: AppOutSchema) => {
         console.log("Edit app:", app);
     };
 
-    const handleDeleteApp = (app: App) => {
+    const handleDeleteApp = (app: AppOutSchema) => {
         console.log("Delete app:", app);
     };
 
-    if (!data) return <PageLoader />;
     if (isError) return <ErrorCard />;
+    if (!data) return <PageLoader />;
     if (!data.length) return <EmptyApps onCreateApp={openDrawer} />;
 
     return (

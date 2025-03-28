@@ -15,11 +15,11 @@ import { useFieldArray, useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "@/constants/query-keys";
 import { mutationKeys } from "@/constants/mutation-keys";
-import { client } from "@/actions/client";
 import { useFeedback } from "@/hooks/use-feedback";
 import { CopyButton } from "../copy-button";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { api } from "@/lib/api/client";
 
 interface ContentDataProps extends HTMLAttributes<HTMLDivElement> {
     slug: string;
@@ -82,7 +82,7 @@ export const ContentData: FC<ContentDataProps> = ({ slug, ...props }) => {
 
     const { mutate: updateContent, isPending: isUpdating } = useMutation({
         mutationKey: [mutationKeys.UPDATE_CONTENT],
-        mutationFn: ({ appId, contentId, data }: MutaionProps) => client.updateContent(appId, contentId, data),
+        mutationFn: ({ appId, contentId, data }: MutaionProps) => api.content.updateContent(appId, contentId, data),
         onError: () => feedbackFailure({ title: "Oops", description: `Error while ${isCreating ? "creating" : "updating"} content` }),
         onSuccess: async () => {
             contentCache.clear();

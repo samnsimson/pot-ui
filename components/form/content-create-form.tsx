@@ -7,10 +7,10 @@ import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { client } from "@/actions/client";
 import { useFeedback } from "@/hooks/use-feedback";
 import { ApiError } from "@/lib/types";
 import { queryKeys } from "@/constants/query-keys";
+import { api } from "@/lib/api/client";
 interface ContentCreateProps {
     appId: string;
     name: string;
@@ -34,9 +34,9 @@ export const ContentCreateForm: FC<ContentCreateFormProps> = ({ appId = "", slug
     const form = useForm<ContentCreateType>({ resolver: zodResolver(ContentCreateSchema), defaultValues: { name: "" } });
 
     const { mutate: createAppContent, isPending: isCreatingContent } = useMutation({
-        mutationFn: ({ appId, name, parentId }: ContentCreateProps) => client.createContent(appId, { name, parent_id: parentId }),
+        mutationFn: ({ appId, name, parentId }: ContentCreateProps) => api.content.createContent(appId, { name, parent_id: parentId }),
         onError: (error: ApiError) => feedbackFailure({ title: "Oops!", description: error.response?.data.detail }),
-        onSuccess: (data) => {
+        onSuccess: ({ data }) => {
             form.reset({ name: "" });
             queryClient.invalidateQueries({ queryKey: [queryKeys.GET_APP_CONTENT, slug] });
             feedbackSuccess({ title: "Success", description: "Content deleted successfully!" });

@@ -9,12 +9,13 @@ import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { App } from "@/lib/types";
+import { AppOutSchema } from "@/api/client";
 
 interface AppCardProps {
-    app: App;
+    app: AppOutSchema;
     viewMode: "grid" | "list";
-    onEdit?: (app: App) => void;
-    onDelete?: (app: App) => void;
+    onEdit?: (app: AppOutSchema) => void;
+    onDelete?: (app: AppOutSchema) => void;
 }
 
 export const AppCard: FC<AppCardProps> = ({ app, viewMode, onEdit, onDelete }) => {

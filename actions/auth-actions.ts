@@ -1,9 +1,7 @@
 "use server";
-import { api, schemas } from "@/lib/api";
-import { z } from "zod";
+import { UserCreateSchema } from "@/api/client";
+import { api } from "@/lib/api/client";
 
-type SignupSchema = z.infer<typeof schemas.UserCreateSchema>;
-
-export const signup = async (body: SignupSchema) => {
-    return await api.signup({ ...body });
+export const signup = async (body: UserCreateSchema) => {
+    return await api.auth.signup({ ...body });
 };

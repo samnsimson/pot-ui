@@ -1,10 +1,11 @@
 import { env } from "@/env";
-import { api } from "@/lib/api";
+import { ServerApi } from "@/lib/api/server";
 import { NextPage } from "next";
 
 export async function generateStaticParams() {
-    const { access_token } = await api.login({ username: env.USERNAME, password: env.PASSWORD });
-    const apps = await api.list_apps({ headers: { Authorization: `Bearer ${access_token}` } });
+    const api = new ServerApi();
+    const { data } = await api.auth.login(env.USERNAME, env.PASSWORD);
+    const { data: apps } = await api.apps.listApps({ headers: { Authorization: `Bearer ${data.access_token}` } });
     return apps.map((app) => ({ slug: app.slug }));
 }
 

@@ -1,10 +1,10 @@
 "use client";
-import { FC, Fragment, HTMLAttributes, useMemo, useState } from "react";
+import { FC, Fragment, HTMLAttributes, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { DownloadIcon, LoaderIcon, NewspaperIcon, PencilIcon, SaveIcon, XIcon } from "lucide-react";
 import { useQueryState } from "nuqs";
-import { client } from "@/actions/client";
 import { useFeedback } from "@/hooks/use-feedback";
+import { api } from "@/lib/api/client";
 
 interface ContentActionButtonsProps extends HTMLAttributes<HTMLDivElement> {
     appId: string | null;
@@ -35,7 +35,7 @@ export const ContentActionButtons: FC<ContentActionButtonsProps> = ({ appId, isF
         try {
             if (!appId || !contentId) return;
             setDownloading(true);
-            const response = (await client.exportContent(appId, contentId)) as any;
+            const response = (await api.content.exportContent(appId, contentId)) as any;
             const blob = new Blob([response], { type: "application/json" });
             const url = window.URL.createObjectURL(blob);
             download(url, `content-${contentId}.json`);

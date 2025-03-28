@@ -8,7 +8,8 @@
         "start": "next start",
         "lint": "next lint",
         "format": "prettier \"**/*.{js,ts,jsx,tsx}\" --write",
-        "prebuild": "openapi-zod-client http://localhost:8000/api/v1/openapi.json -o lib/api.ts --base-url=http://localhost:8000/api/v1 --strict-objects --export-schemas --export-types"
+        "gen:api": "openapi-generator-cli generate -i http://localhost:8000/api/v1/openapi.json -g typescript-axios -o api/client  --additional-properties=supportsES6=true,withInterfaces=true",
+        "prebuild": "pnpm gen:api"
     },
     "dependencies": {
         "@arcjet/next": "1.0.0-beta.3",
@@ -68,6 +69,7 @@
         "react-hook-form": "^7.54.2",
         "react-resizable-panels": "^2.1.7",
         "recharts": "^2.15.1",
+        "server-only": "^0.0.1",
         "sonner": "^1.7.2",
         "tailwind-merge": "^2.6.0",
         "tailwindcss-animate": "^1.0.7",
@@ -77,6 +79,7 @@
     },
     "devDependencies": {
         "@eslint/eslintrc": "^3",
+        "@openapitools/openapi-generator-cli": "^2.18.4",
         "@types/crypto-js": "^4.2.2",
         "@types/node": "^20",
         "@types/qs": "^6.9.18",

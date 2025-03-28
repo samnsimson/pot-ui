@@ -3,7 +3,6 @@ import { FC, HTMLAttributes, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { schemas } from "@/lib/api";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -12,22 +11,37 @@ import { signup } from "@/actions/auth-actions";
 import { redirect, useRouter } from "next/navigation";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
+import { UserCreateSchema } from "@/api/client";
 
 interface SignupFormProps extends HTMLAttributes<HTMLDivElement> {
     [x: string]: any;
 }
+const phoneSchema = z
+    .string()
+    .transform((val) => val.replace(/[^\d]/g, ""))
+    .refine((val) => val.length === 10, { message: "Phone number must be 10 digits" })
+    .refine((val) => !val.startsWith("0"), { message: "Phone number cannot start with 0" })
+    .refine((val) => !val.match(/^(\d)\1{9}$/), { message: "Phone number cannot be all repeating digits" });
 
-type SignupSchema = z.infer<typeof schemas.UserCreateSchema>;
+const CreateUser = z.object({
+    username: z
+        .string()
+        .min(3)
+        .transform((val) => val.toLowerCase()),
+    password: z.string().min(3).max(8),
+    email: z
+        .string()
+        .email()
+        .transform((val) => val.toLowerCase()),
+    phone: phoneSchema,
+});
 
 export const SignupForm: FC<SignupFormProps> = ({}) => {
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
-    const form = useForm<SignupSchema>({
-        resolver: zodResolver(schemas.UserCreateSchema),
-        defaultValues: { username: "", password: "" },
-    });
+    const form = useForm<UserCreateSchema>({ resolver: zodResolver(CreateUser), defaultValues: { username: "", password: "" } });
 
-    const handleSignup = async (signupData: SignupSchema) => {
+    const handleSignup = async (signupData: UserCreateSchema) => {
         try {
             setIsLoading(true);
             const user = await signup(signupData);

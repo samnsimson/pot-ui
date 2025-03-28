@@ -1,6 +1,6 @@
 "use client";
 import axios, { AxiosResponse, InternalAxiosRequestConfig } from "axios";
-import { getSession, signOut } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import { getToken, getTransactionId } from "./utils";
 
 const requestCallback = async (config: InternalAxiosRequestConfig<any>) => {
@@ -26,8 +26,7 @@ const responseError = (error: any) => {
     return Promise.reject(error);
 };
 
-const headers = { "Content-Type": "application/json" };
-const axiosInstance = axios.create({ headers, timeout: 5000 });
+const axiosInstance = axios.create({ timeout: 5000 });
 axiosInstance.interceptors.request.use(requestCallback, requestError);
 axiosInstance.interceptors.response.use(responseCallback, responseError);
 
