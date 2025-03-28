@@ -170,6 +170,62 @@ export interface AuthResponseSchema {
 /**
  * 
  * @export
+ * @interface BodyLogin
+ */
+export interface BodyLogin {
+    /**
+     * 
+     * @type {string}
+     * @memberof BodyLogin
+     */
+    'grant_type'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof BodyLogin
+     */
+    'username': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof BodyLogin
+     */
+    'password': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof BodyLogin
+     */
+    'scope'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof BodyLogin
+     */
+    'client_id'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof BodyLogin
+     */
+    'client_secret'?: string | null;
+}
+/**
+ * 
+ * @export
+ * @interface BodyUploadMedia
+ */
+export interface BodyUploadMedia {
+    /**
+     * Media file to upload
+     * @type {File}
+     * @memberof BodyUploadMedia
+     */
+    'file': File;
+}
+/**
+ * 
+ * @export
  * @interface ContentCreateSchema
  */
 export interface ContentCreateSchema {

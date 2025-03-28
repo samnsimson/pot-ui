@@ -26,18 +26,20 @@ export const AppForm: FC<AppFormProps> = ({ ...props }) => {
     const [error, setError] = useState<string | null>(null);
     const form = useForm<AppCreateType>({ resolver: zodResolver(AppCreate), defaultValues: { name: "" } });
 
-    const onSuccess = (data: AppOutSchema) => {
-        if (error) setError(null);
-        queryClient.setQueryData([queryKeys.GET_APPS], (apps: Array<AppOutSchema>) => [...apps, data]);
-        feedbackSuccess({ title: "Success", description: "App created successfully!" });
-        form.reset({ name: "" });
-    };
-
     const onError = (error: AxiosError<any>) => {
         setError(error.response?.data?.detail);
     };
 
-    const { mutate, isPending } = useMutation({ mutationFn: api.apps.createApp, onSuccess: ({ data }) => onSuccess(data), onError: onError });
+    const { mutate, isPending } = useMutation({
+        mutationFn: (data: AppCreateSchema) => api.apps.createApp(data),
+        onError: onError,
+        onSuccess: ({ data }) => {
+            if (error) setError(null);
+            queryClient.setQueryData([queryKeys.GET_APPS], (apps: Array<AppOutSchema>) => [...apps, data]);
+            feedbackSuccess({ title: "Success", description: "App created successfully!" });
+            form.reset({ name: "" });
+        },
+    });
     const handleSubmit = (data: AppCreateSchema) => mutate(data);
 
     return (

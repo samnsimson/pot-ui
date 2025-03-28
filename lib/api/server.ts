@@ -10,7 +10,7 @@ export class ServerApi {
     public readonly content: ContentApi;
 
     constructor(config?: Configuration) {
-        this.config = config ?? new Configuration({ basePath: env.SERVER_BASE_PATH });
+        this.config = config ?? new Configuration({ basePath: env.BASE_PATH });
         this.auth = new AuthApi(this.config);
         this.apps = new AppsApi(this.config);
         this.media = new MediaApi(this.config);

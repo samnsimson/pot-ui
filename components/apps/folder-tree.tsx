@@ -2,7 +2,6 @@
 import { ChevronRightIcon, FileTextIcon, FilePlusIcon, FolderIcon, FolderOpenIcon, PencilIcon, TrashIcon } from "lucide-react";
 import { FC, HTMLAttributes, useState } from "react";
 import { cn } from "@/lib/utils";
-import { Content } from "@/lib/types";
 import { useAppContext } from "@/context/apps-context";
 import { Button } from "@/components/ui/button";
 import { useModal } from "@/context/modal-context";
@@ -11,6 +10,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { useConfirmation } from "@/hooks/use-confirmation";
 import Link from "next/link";
 import { useQueryState } from "nuqs";
+import { ContentOutSchema } from "@/api/client";
 
 interface FolderTreeProps extends HTMLAttributes<HTMLDivElement> {
     slug: string;
@@ -18,7 +18,7 @@ interface FolderTreeProps extends HTMLAttributes<HTMLDivElement> {
 
 interface TreeNodeProps {
     slug: string;
-    content: Content;
+    content: ContentOutSchema;
     activeId: string | undefined;
 }
 

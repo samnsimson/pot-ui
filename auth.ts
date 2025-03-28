@@ -1,7 +1,7 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import { AuthOptions } from "next-auth";
 import { env } from "./env";
-import { ServerApi } from "./lib/api/server";
+import { Api } from "./lib/api/client";
 
 export const authOptions: AuthOptions = {
     session: {
@@ -14,9 +14,9 @@ export const authOptions: AuthOptions = {
             authorize: async (credentials) => {
                 try {
                     if (!credentials) return null;
-                    const api = new ServerApi();
+                    const api = new Api({ basePath: env.BASE_PATH });
                     const { email: username, password } = credentials;
-                    const { data } = await api.auth.login(username, password);
+                    const data = await api.login({ username, password });
                     const { status, user_id, token_max_age, ...rest } = data;
                     if (status !== "Success") return null;
                     return { id: user_id, expires_in: token_max_age, ...rest };
@@ -40,7 +40,7 @@ export const authOptions: AuthOptions = {
                 return token;
             } else {
                 try {
-                    const api = new ServerApi();
+                    const api = new Api({ basePath: env.BASE_PATH });
                     const { data: resp } = await api.auth.refreshToken({ token: token.refreshToken });
                     token.sub = resp.user_id;
                     token.accessToken = resp.access_token;

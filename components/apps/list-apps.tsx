@@ -14,20 +14,22 @@ import { Input } from "@/components/ui/input";
 import { AppCard } from "./app-card";
 import { EmptyApps } from "./empty-apps";
 import { ViewToggle } from "./view-toggle";
-import { api } from "@/lib/api/client";
+import { Api } from "@/lib/api/client";
 import { AppOutSchema } from "@/api/client";
+import { env } from "@/env";
 
 interface ListAppsProps extends HTMLAttributes<HTMLDivElement> {
     [x: string]: any;
 }
 
 export const ListApps: FC<ListAppsProps> = ({ ...props }) => {
+    const api = new Api({ basePath: env.NEXT_PUBLIC_BASE_PATH });
     const title = "Create New App";
     const description = "Create a new app";
     const [viewMode, setViewMode] = useState<"grid" | "list">(() => (localStorage.getItem("viewMode") as any) ?? "grid");
     const [searchQuery, setSearchQuery] = useQueryState("q");
     const { openDrawer } = useDrawer({ title, description, render: ({ isOpen }) => <CreateAppComponent isOpen={isOpen} /> });
-    const { data, error, isError } = useQuery({ queryKey: [queryKeys.GET_APPS], queryFn: () => api.apps.listApps(), select: ({ data }) => data });
+    const { data, error, isError } = useQuery({ queryKey: [queryKeys.GET_APPS], queryFn: api.listApps });
     const [appsList, setAppsList] = useState<Array<AppOutSchema>>([]);
 
     useEffect(() => {

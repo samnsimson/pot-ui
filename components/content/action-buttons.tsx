@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { DownloadIcon, LoaderIcon, NewspaperIcon, PencilIcon, SaveIcon, XIcon } from "lucide-react";
 import { useQueryState } from "nuqs";
 import { useFeedback } from "@/hooks/use-feedback";
-import { api } from "@/lib/api/client";
+import { Api } from "@/lib/api/client";
+import { env } from "@/env";
 
 interface ContentActionButtonsProps extends HTMLAttributes<HTMLDivElement> {
     appId: string | null;
@@ -35,8 +36,9 @@ export const ContentActionButtons: FC<ContentActionButtonsProps> = ({ appId, isF
         try {
             if (!appId || !contentId) return;
             setDownloading(true);
-            const response = (await api.content.exportContent(appId, contentId)) as any;
-            const blob = new Blob([response], { type: "application/json" });
+            const api = new Api({ basePath: env.NEXT_PUBLIC_BASE_PATH });
+            const response = (await api.exportContent({ appId, contentId })) as any;
+            const blob = new Blob([JSON.stringify(response)], { type: "application/json" });
             const url = window.URL.createObjectURL(blob);
             download(url, `content-${contentId}.json`);
             feedbackSuccess({ title: "Success!", description: "Your dowonload should begin shortly" });

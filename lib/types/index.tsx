@@ -1,16 +1,24 @@
-import { z } from "zod";
-import { schemas } from "../api";
 import { LucideProps } from "lucide-react";
 import { ForwardRefExoticComponent, RefAttributes } from "react";
 import { AxiosError } from "axios";
+import {
+    AppCreateSchema,
+    AppOutSchema,
+    ContentCreateSchema,
+    ContentOutSchema,
+    ContentUpdateSchema,
+    MediaResponse,
+    MediaTypeEnum,
+    UserOutSchema,
+} from "@/api/client";
 
-export type App = z.infer<typeof schemas.AppOutSchema>;
-export type AppCreate = z.infer<typeof schemas.AppCreateSchema>;
+export type App = AppOutSchema;
+export type AppCreate = AppCreateSchema;
 export type Icon = ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>;
-export type ContentCreate = z.infer<typeof schemas.ContentCreateSchema>;
-export type ContentUpdate = z.infer<typeof schemas.ContentUpdateSchema>;
-export type Content = z.infer<typeof schemas.ContentOutSchema>;
-export type AppUsers = z.infer<typeof schemas.UserOutSchema>;
+export type ContentCreate = ContentCreateSchema;
+export type ContentUpdate = ContentUpdateSchema;
+export type Content = ContentOutSchema;
+export type AppUsers = UserOutSchema;
 export type ApiError = AxiosError<{ detail: any }>;
-export type MediaType = z.infer<typeof schemas.MediaTypeEnum>;
-export type Media = z.infer<typeof schemas.MediaResponse>;
+export type MediaType = MediaTypeEnum;
+export type Media = MediaResponse;

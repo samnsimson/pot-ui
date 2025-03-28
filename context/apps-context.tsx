@@ -2,8 +2,9 @@
 import { AppOutSchema, MediaResponse, UserOutSchema } from "@/api/client";
 import { PageLoader } from "@/components/loader/page-loader";
 import { queryKeys } from "@/constants/query-keys";
+import { env } from "@/env";
 import { useFeedback } from "@/hooks/use-feedback";
-import { api } from "@/lib/api/client";
+import { Api } from "@/lib/api/client";
 import { App, Content } from "@/lib/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
@@ -34,6 +35,7 @@ const AppsContext = createContext<AppsContextInterface>({
 });
 
 export const AppsContextProvider: FC<ProviderProps> = ({ children }) => {
+    const api = new Api({ basePath: env.NEXT_PUBLIC_BASE_PATH });
     const router = useRouter();
     const { slug } = useParams();
     const queryClient = useQueryClient();
@@ -42,36 +44,32 @@ export const AppsContextProvider: FC<ProviderProps> = ({ children }) => {
 
     const { data: appData, error } = useQuery({
         queryKey: [GET_APP_DETAIL, slug],
-        queryFn: () => api.apps.getAppByIdOrSlug(String(slug)),
-        select: ({ data }) => data,
+        queryFn: () => api.getApp(String(slug)),
         enabled: !!slug,
     });
 
     const { data: appContent = [] } = useQuery({
         queryKey: [GET_APP_CONTENT, slug],
-        queryFn: () => api.content.getContent(appData!.id),
-        select: ({ data }) => data,
+        queryFn: () => api.getContent(appData!.id),
         enabled: !!appData,
     });
 
     const { data: appUsers = [] } = useQuery({
         queryKey: [GET_APP_USERS, slug],
-        queryFn: () => api.apps.getAppUsers(appData!.id),
-        select: ({ data }) => data,
+        queryFn: () => api.getAppUsers(appData!.id),
         enabled: !!appData,
     });
 
     const { data: appMedia = [] } = useQuery({
         queryKey: [LIST_APP_MEDIA, slug],
-        queryFn: () => api.media.listAppMedia(appData!.id),
-        select: ({ data }) => data,
+        queryFn: () => api.listMedia({ appId: appData!.id }),
         enabled: !!appData,
     });
 
     const { mutate: deleteApp, isPending: isDeleting } = useMutation({
-        mutationFn: (id: string) => api.apps.deleteApp(id),
+        mutationFn: (id: string) => api.deleteApp(id),
         onError: () => feedbackFailure({ title: "Oops!", description: "Error deleting the app!" }),
-        onSuccess: async ({ data }) => {
+        onSuccess: async (data) => {
             await queryClient.setQueryData([GET_APPS], (state: Array<App>) => state.filter((x) => x.id !== data.id));
             feedbackSuccess({ title: "Success", description: "App deleted successfully!" });
             router.push("/");
